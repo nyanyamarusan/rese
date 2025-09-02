@@ -1,0 +1,16 @@
+docker-compose.override.yml
+/.idea
+/.vscode
+/.windsurf
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.bak
+*.swp
+*.swo
+.dockerignore
+/docker/mysql/data
+*.log
+*.sqlite
+.htaccess
+Makefile
