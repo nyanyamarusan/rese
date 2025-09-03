@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use App\Models\Shop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ShopController extends Controller
 {
@@ -17,9 +18,14 @@ class ShopController extends Controller
         $shops = Shop::with(['area', 'genre'])->get();
         $areas = Area::all();
         $genres = Genre::all();
+        $user = Auth::user();
 
-        $user = User::find(1);
-        $userLikes = $user->likes()->pluck('shop_id')->toArray();
+        if ($user) {
+            $userLikes = $user->likes()->pluck('shop_id')->toArray();
+        } else {
+            $userLikes = [];
+        };
+
         return view('index', compact('shops', 'areas', 'genres', 'userLikes'));
     }
 

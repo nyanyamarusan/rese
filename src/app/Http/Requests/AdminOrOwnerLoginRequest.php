@@ -4,9 +4,10 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Validation\ValidationException;
 
-class LoginRequest extends FormRequest
+class AdminOrOwnerLoginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -21,6 +22,9 @@ class LoginRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
+
+    public string $role;
+
     public function rules(): array
     {
         return [
@@ -29,17 +33,43 @@ class LoginRequest extends FormRequest
         ];
     }
 
+    public function role(): string
+    {
+        if ($this->routeIs('admin.*')) {
+            return 'admin';
+        } elseif ($this->routeIs('owner.*')) {
+            return 'owner';
+        }
+
+        abort(404);
+    }
+
     public function authenticate()
     {
-        $credentials = $this->only('email', 'password');
-        if (!Auth::attempt($credentials)) {
+        $role = $this->role();
+        $key = 'login|'.$this->email.'|'.$this->ip();
+
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            throw ValidationException::withMessages([
+                'email' => 'ログイン試行回数が多すぎます。しばらく待ってください。',
+            ]);
+        }
+
+        if (!Auth::guard($role)->attempt($this->only('email', 'password'))) {
+            RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
                 'email' => 'ログイン情報が登録されていません',
             ]);
         }
 
-        Auth::guard('owner')->logout();
-        Auth::guard('admin')->logout();
+        RateLimiter::clear($key);
+
+        foreach (['admin','owner'] as $guard) {
+            if ($guard !== $role) {
+                Auth::guard($guard)->logout();
+            }
+        }
+        Auth::guard('web')->logout();
     }
 
     public function messages(): array

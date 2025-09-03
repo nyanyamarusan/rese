@@ -22,7 +22,7 @@
             <form action="{{ route('reservation') }}" method="post">
                 @csrf
                 <input type="hidden" name="shop_id" value="{{ $shop->id }}">
-                <input type="hidden" name="user_id" value="{{ $user->id }}">
+                <input type="hidden" name="user_id" value="{{ Auth::check() ? Auth::user()->id : '' }}">
                 <div class="card-body p-lg-4">
                     <h2 class="card-title fs-5 fw-bold mb-3 mb-lg-4">予約</h2>
                     <div class="mb-3">

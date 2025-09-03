@@ -2,7 +2,8 @@
 
 @section('content')
 <div class="container d-flex justify-content-center align-items-center py-5">
-    <x-form title="Review" route="review-post" params="['reservation_id' => $reservation->id]" class="col-12 col-sm-10 col-md-6 col-xl-5" buttonText="送信">
+    <x-form title="Review" route="review-post" params="['reservation_id' => $reservation->id]"
+        class="col-12 col-sm-10 col-md-6 col-xl-5" buttonText="送信">
         <div class="card col-10 my-3">
             <div class="text-start card-body table-bg text-white rounded-1 shadow-right-bottom">
                 <table class="w-100">
@@ -27,9 +28,10 @@
         </div>
         <div class="my-3">
             @for ($i = 1; $i <= 5; $i++)
-            <div class="mb-1">
-                <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}">
-                <label for="star{{ $i }}" class="fw-medium">
+            <div class="mb-1 form-check">
+                <input type="radio" id="star{{ $i }}" name="rating" value="{{ $i }}"
+                    class="border-secondary form-check-input pointer">
+                <label for="star{{ $i }}" class="form-check-label fw-medium">
                     {{ $i }} -
                     @switch($i)
                         @case(1) とても悪い @break

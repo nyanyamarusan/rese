@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\UserController;
@@ -9,6 +10,10 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'store'])->name('register');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+Route::get('/admin/login', [AuthController::class, 'adminLoginView'])->name('admin-login-view');
+Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('admin-login');
+Route::get('/owner/login', [AuthController::class, 'ownerLoginView'])->name('owner-login-view');
+Route::post('/owner/login', [AuthController::class, 'ownerLogin'])->name('owner-login');
 
 Route::get('/', [ShopController::class, 'index'])->name('index');
 Route::get('/search', [ShopController::class, 'search'])->name('search');
@@ -28,3 +33,5 @@ Route::get('/reservation/{reservation_id}/qr', [UserController::class, 'showQr']
 Route::get('/owner', [OwnerController::class, 'index'])->name('owner-index');
 Route::get('/owner/show/{shop_id}', [OwnerController::class, 'show'])->name('owner-show');
 Route::get('/owner/checkin/{checkin_token}', [OwnerController::class, 'checkin'])->name('checkin');
+
+Route::get('/admin', [AdminController::class, 'index'])->name('admin-index');
