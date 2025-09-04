@@ -31,6 +31,7 @@ Route::post('/review/post/{reservation_id}', [UserController::class, 'store'])->
 Route::get('/reservation/{reservation_id}/qr', [UserController::class, 'showQr'])->name('reservation-qr');
 
 Route::get('/owner', [OwnerController::class, 'index'])->name('owner-index');
+Route::post('/owner/store', [OwnerController::class, 'store'])->name('owner-store');
 Route::get('/owner/show/{shop_id}', [OwnerController::class, 'show'])->name('owner-show');
 Route::get('/owner/checkin/{checkin_token}', [OwnerController::class, 'checkin'])->name('checkin');
 

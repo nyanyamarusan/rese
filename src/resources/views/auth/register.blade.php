@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container d-flex justify-content-center align-items-center py-5">
-    <x-form title="Registration" route="register" class="col-10 col-sm-8 col-md-6 col-lg-4" buttonText="登録">
+    <x-form title="Registration" route="register" class="col-10 col-sm-8 col-md-6 col-lg-4 mt-md-2 mt-lg-5" buttonText="登録">
         <x-input label="<img src='{{ asset('icon/user.svg') }}'>"
             type="text" name="name" placeholder="Username" labelClass="col-1" inputClass="col-10" />
         <x-input label="<img src='{{ asset('icon/mail.svg') }}' class='w-100'>"

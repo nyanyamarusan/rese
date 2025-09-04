@@ -10,7 +10,7 @@
 ])
 
 <div class="d-flex justify-content-center gap-2 align-items-center col-11 mt-3">
-    <label for="{{ $name }}" class="fs-5 font-bold {{ $labelClass }}">
+    <label for="{{ $name }}" class="font-bold {{ $labelClass }}">
         {!! $label !!}
         {{ $labelText }}
     </label>

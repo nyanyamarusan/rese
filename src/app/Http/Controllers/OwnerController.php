@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Area;
+use App\Models\Genre;
+use App\Models\Owner;
 use App\Models\Reservation;
 use App\Models\Shop;
-use App\Models\Owner;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OwnerController extends Controller
@@ -14,8 +17,32 @@ class OwnerController extends Controller
         //$owner = Auth::guard('owner')->user();
         $owner = Owner::find(1);
         $shops = Shop::where('owner_id', $owner->id)->get();
+        $areas = Area::all();
+        $genres = Genre::all();
 
-        return view('owner-index', compact('shops'));
+        return view('owner-index', compact('shops', 'areas', 'genres'));
+    }
+
+    public function store(Request $request)
+    {
+        $owner = Owner::find(1);
+        //$owner = Auth::guard('owner')->user();
+        $shop = $request->only([
+            'name',
+            'area_id',
+            'genre_id',
+            'detail',
+        ]);
+
+        $image = $request->file('image')
+            ->store('shop-img', 'public');
+        $shop['image'] = basename($image);
+        $shop['owner_id'] = $owner->id;
+
+        Shop::create($shop);
+
+        return redirect()->route('owner-index')
+            ->with('success', '店舗を登録しました');
     }
 
     public function show($shop_id)
