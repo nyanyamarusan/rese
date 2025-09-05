@@ -16,13 +16,10 @@
             </p>
             <p class="show-text my-sm-4 my-3">{{ $shop->detail }}</p>
         </div>
-
         <div class="col position-relative mt-5 mt-md-0">
             <div class="card bg-primary text-white position-absolute w-100 card-position">
             <form action="{{ route('reservation') }}" method="post">
                 @csrf
-                <input type="hidden" name="shop_id" value="{{ $shop->id }}">
-                <input type="hidden" name="user_id" value="{{ Auth::check() ? Auth::user()->id : '' }}">
                 <div class="card-body p-lg-4">
                     <h2 class="card-title fs-5 fw-bold mb-3 mb-lg-4">予約</h2>
                     <div class="mb-3">

@@ -23,5 +23,8 @@ class DatabaseSeeder extends Seeder
         ]);
         Reservation::factory()->count(2)->create();
         Reservation::factory()->visited()->count(4)->create();
+        Reservation::factory()->count(20)->create([
+            'shop_id' => 1,
+        ]);
     }
 }

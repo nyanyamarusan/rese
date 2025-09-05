@@ -33,6 +33,8 @@ Route::get('/reservation/{reservation_id}/qr', [UserController::class, 'showQr']
 Route::get('/owner', [OwnerController::class, 'index'])->name('owner-index');
 Route::post('/owner/store', [OwnerController::class, 'store'])->name('owner-store');
 Route::get('/owner/show/{shop_id}', [OwnerController::class, 'show'])->name('owner-show');
+Route::patch('/owner/update/{shop_id}', [OwnerController::class, 'update'])->name('owner-update');
 Route::get('/owner/checkin/{checkin_token}', [OwnerController::class, 'checkin'])->name('checkin');
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin-index');
+Route::post('/admin/store', [AdminController::class, 'store'])->name('admin-store');

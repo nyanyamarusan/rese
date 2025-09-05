@@ -9,6 +9,7 @@ use App\Models\Reservation;
 use App\Models\Shop;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class OwnerController extends Controller
 {
@@ -42,13 +43,48 @@ class OwnerController extends Controller
         Shop::create($shop);
 
         return redirect()->route('owner-index')
-            ->with('success', '店舗を登録しました');
+            ->with('message', '店舗を登録しました');
     }
 
     public function show($shop_id)
     {
         $shop = Shop::with(['area', 'genre'])->findOrFail($shop_id);
-        return view('owner-show', compact('shop'));
+        $reservations = Reservation::where('shop_id', $shop_id)
+            ->where('visited', false)
+            ->with('user')
+            ->orderBy('date')
+            ->orderBy('time')
+            ->paginate(6);
+
+        $areas = Area::all();
+        $genres = Genre::all();
+
+        return view('owner-show', compact('shop', 'reservations', 'areas', 'genres'));
+    }
+
+    public function update(Request $request, $shop_id)
+    {
+        $shop = Shop::findOrFail($shop_id);
+
+        $shopData = $request->only([
+            'name',
+            'area_id',
+            'genre_id',
+            'detail',
+        ]);
+
+        $image = $request->file('image')
+            ->store('shop-img', 'public');
+        $shopData['image'] = basename($image);
+        if ($shop->image) {
+            $image = 'shop-img/' . $shop->image;
+            Storage::disk('public')->delete($image);
+        }
+
+        $shop->update($shopData);
+
+        return redirect()->route('owner-show', ['shop_id' => $shop_id], ['tab' => 'edit'])
+            ->with('message', '店舗情報を更新しました');
     }
 
     public function checkin($checkin_token)
@@ -68,7 +104,7 @@ class OwnerController extends Controller
             'visited' => true,
         ]);
 
-        return redirect()->route('owner-show')
-            ->with('success', '来店確認が完了しました');
+        return redirect()->route('owner-show', ['shop_id' => $reservation->shop_id])
+            ->with('message', '来店確認が完了しました');
     }
 }
