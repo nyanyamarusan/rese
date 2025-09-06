@@ -7,9 +7,10 @@ use App\Http\Requests\AdminOrOwnerLoginRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 
 class AuthController extends Controller
 {
@@ -23,14 +24,14 @@ class AuthController extends Controller
 
         Auth::login($user);
         event(new Registered($user));
-        return view('auth.thanks');
+        return redirect()->route('verification.notice');
     }
 
     public function login(LoginRequest $request)
     {
         $request->authenticate();
 
-        return redirect(route('index'));
+        return redirect()->route('index');
     }
 
     public function adminLoginView()
@@ -47,14 +48,14 @@ class AuthController extends Controller
     {
         $request->authenticate();
 
-        return redirect(route('admin-index'));
+        return redirect()->route('admin-index');
     }
 
     public function ownerLogin(AdminOrOwnerLoginRequest $request)
     {
         $request->authenticate();
 
-        return redirect(route('owner-index'));
+        return redirect()->route('owner-index');
     }
 
     public function logout(Request $request)
@@ -77,6 +78,27 @@ class AuthController extends Controller
             $request->session()->regenerateToken();
         }
 
-        return redirect(route($redirect));
+        return redirect()->route($redirect);
+    }
+
+    public function thanks()
+    {
+        return view('auth.thanks');
+    }
+
+    public function verify(EmailVerificationRequest $request)
+    {
+        $request->fulfill();
+
+        Auth::logout();
+
+        return redirect()->route('thanks');
+    }
+
+
+
+    public function verifyEmail()
+    {
+        return view('auth.verify-email');
     }
 }

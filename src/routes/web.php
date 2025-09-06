@@ -14,6 +14,10 @@ Route::get('/admin/login', [AuthController::class, 'adminLoginView'])->name('adm
 Route::post('/admin/login', [AuthController::class, 'adminLogin'])->name('admin-login');
 Route::get('/owner/login', [AuthController::class, 'ownerLoginView'])->name('owner-login-view');
 Route::post('/owner/login', [AuthController::class, 'ownerLogin'])->name('owner-login');
+Route::get('/thanks', [AuthController::class, 'thanks'])->name('thanks');
+Route::get('/email/verify/{id}/{hash}', [AuthController::class, 'verify'])
+    ->middleware(['auth', 'signed'])
+    ->name('verification.verify');
 
 Route::get('/', [ShopController::class, 'index'])->name('index');
 Route::get('/search', [ShopController::class, 'search'])->name('search');
