@@ -11,7 +11,11 @@
                 メール内のリンクから認証してください
             </p>
             <div class="text-center mt-3 mt-md-4 mt-xl-5">
-                <a href="http://localhost:8025/" target="_blank"
+                <a href="{{ URL::temporarySignedRoute(
+                            'verification.verify',
+                            now()->addMinutes(60),
+                            ['id' => Auth::user()->id, 'hash' => sha1(Auth::user()->email)]
+                        ) }}" target="_blank"
                     class="bg-primary text-white px-2 px-xl-3 py-1 btn-sm rounded-1 text-decoration-none fs-0_98vw">
                     認証する
                 </a>

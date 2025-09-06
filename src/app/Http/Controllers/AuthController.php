@@ -94,11 +94,4 @@ class AuthController extends Controller
 
         return redirect()->route('thanks');
     }
-
-
-
-    public function verifyEmail()
-    {
-        return view('auth.verify-email');
-    }
 }
