@@ -18,4 +18,20 @@
             type="password" name="password" placeholder="Password" labelClass="col-1" inputClass="col-10" />
     </x-form>
 </div>
+
+{{--- メール送信フォーム ---}}
+<form action="{{ route('send-notice') }}" method="POST">
+    @csrf
+    <div>
+        <label for="subject">件名</label>
+        <input type="text" name="subject" id="subject" value="{{ old('subject') }}" required>
+    </div>
+
+    <div>
+        <label for="body">本文</label>
+        <textarea name="body" id="body" rows="5" required>{{ old('body') }}</textarea>
+    </div>
+
+    <button type="submit">送信</button>
+</form>
 @endsection

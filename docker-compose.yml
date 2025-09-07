@@ -44,3 +44,11 @@ services:
       - "8025:8025"
       - "1025:1025"
 
+  scheduler:
+    image: php:8.2-cli
+    volumes:
+      - .:/var/www/html
+    entrypoint: >
+      sh -c "while true; do php /var/www/html/artisan schedule:run; sleep 60; done"
+
+

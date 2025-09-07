@@ -42,3 +42,4 @@ Route::get('/owner/checkin/{checkin_token}', [OwnerController::class, 'checkin']
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin-index');
 Route::post('/admin/store', [AdminController::class, 'store'])->name('admin-store');
+Route::post('/admin/send-notice', [AdminController::class, 'sendNotice'])->name('send-notice');

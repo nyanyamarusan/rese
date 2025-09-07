@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('number');
             $table->uuid('checkin_token')->unique()->nullable();
             $table->boolean('visited')->default(false);
+            $table->boolean('reminded')->default(false);
             $table->timestamps();
         });
     }
