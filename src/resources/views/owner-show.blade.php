@@ -6,7 +6,13 @@
 @endphp
 <div class="container mb-5">
     @if (session('message'))
-    <div class="alert alert-success text-success" role="alert">
+    <div class="alert
+        @if (session('status') === 'success')
+            alert-success text-success
+        @elseif (session('status') === 'error')
+            alert-danger text-danger
+        @endif
+    " role="alert">
         {{ session('message') }}
     </div>
     @endif
@@ -22,6 +28,12 @@
             <a class="nav-link p-2 {{ $activeTab === 'edit' ? 'active bg-primary text-white' : 'text-black' }}"
                 href="{{ route('owner-show', ['shop_id' => $shop->id, 'tab' => 'edit']) }}">
                 店舗情報更新
+            </a>
+        </li>
+        <li class="nav-item show-text fw-normal">
+            <a class="nav-link p-2 {{ $activeTab === 'checkout' ? 'active bg-primary text-white' : 'text-black' }}"
+                href="{{ route('owner-show', ['shop_id' => $shop->id, 'tab' => 'checkout']) }}">
+                決済
             </a>
         </li>
     </ul>
@@ -154,6 +166,82 @@
                     </div>
                 </x-form>
             </div>
+        </div>
+        <div class="tab-pane fade {{ $activeTab === 'checkout' ? 'show active' : '' }}" id="checkout">
+            <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-3 mb-5 mt-3">
+                @foreach ($checkouts as $index => $checkout)
+                <div class="col">
+                    <div class="card shadow-right-bottom rounded-1 p-lg-2" id="reservation-box-{{ $checkout->id }}">
+                        <div class="card-body">
+                            <form action="{{ route('checkout') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="reservation_id" value="{{ $checkout->id }}">
+                                <p class="m-0 show-text fw-normal mb-3">決済{{ $index + 1 }}</p>
+                                <table class="w-100">
+                                    <tr>
+                                        <th class="col-4 col-md-5 py-1 py-xl-2 show-text fw-normal">Name</th>
+                                        <td class="col-8 col-md-7 py-1 py-xl-2 show-text fw-normal">{{ $checkout->user->name }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-4 col-md-5 py-1 py-xl-2 show-text fw-normal">Date</th>
+                                        <td class="col-8 col-md-7 py-1 py-xl-2">
+                                            {{ $checkout->date->format('Y-m-d') }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-4 col-md-5 py-1 py-xl-2 show-text fw-normal">Time</th>
+                                        <td class="col-8 col-md-7 py-1 py-xl-2">
+                                            {{ $checkout->time->format('H:i') }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-4 col-md-5 py-1 py-xl-2 show-text fw-normal">Number</th>
+                                        <td class="col-8 col-md-7 py-1 py-xl-2">
+                                            {{ $checkout->number }}人
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="col-4 col-md-5 py-1 py-xl-2 show-text fw-normal">Price</th>
+                                        <td class="py-1 py-xl-2 d-flex align-items-center gap-2">
+                                            <span>¥</span>
+                                            <input type="number" name="amount" min="0" class="col-10">
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div class="text-end col-12 mt-3">
+                                    <button type="submit" class="btn btn-primary">
+                                        決済
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                @endforeach
+            </div>
+            @php
+                $current = $checkouts->currentPage();
+                $last = $checkouts->lastPage();
+            @endphp
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center">
+                    <li class="page-item {{ $current == 1 ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $checkouts->previousPageUrl() }}" aria-label="Previous">
+                            <span aria-hidden="true">&laquo;</span>
+                        </a>
+                    </li>
+                    @for ($i = 1; $i <= $last; $i++)
+                        <li class="page-item {{ $current == $i ? 'active' : '' }}">
+                            <a class="page-link" href="{{ $checkouts->url($i) }}">{{ $i }}</a>
+                        </li>
+                    @endfor
+                    <li class="page-item {{ $current == $last ? 'disabled' : '' }}">
+                        <a class="page-link" href="{{ $checkouts->nextPageUrl() }}" aria-label="Next">
+                            <span aria-hidden="true">&raquo;</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </div>
     </div>
 </div>

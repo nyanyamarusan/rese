@@ -21,6 +21,7 @@ return new class extends Migration
             $table->uuid('checkin_token')->unique()->nullable();
             $table->boolean('visited')->default(false);
             $table->boolean('reminded')->default(false);
+            $table->boolean('paid')->default(false);
             $table->timestamps();
         });
     }

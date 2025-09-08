@@ -20,11 +20,14 @@ class Reservation extends Model
         'number',
         'checkin_token',
         'visited',
+        'paid',
     ];
 
     protected $casts = [
         'date' => 'date',
         'time' => 'datetime:H:i',
+        'visited' => 'boolean',
+        'paid' => 'boolean',
     ];
 
     public function user()

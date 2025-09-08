@@ -39,6 +39,10 @@ Route::post('/owner/store', [OwnerController::class, 'store'])->name('owner-stor
 Route::get('/owner/show/{shop_id}', [OwnerController::class, 'show'])->name('owner-show');
 Route::patch('/owner/update/{shop_id}', [OwnerController::class, 'update'])->name('owner-update');
 Route::get('/owner/checkin/{checkin_token}', [OwnerController::class, 'checkin'])->name('checkin');
+Route::post('/owner/checkout', [OwnerController::class, 'checkout'])->name('checkout');
+Route::get('/owner/checkout/success', [OwnerController::class, 'success'])->name('checkout-success');
+Route::get('/owner/checkout/cancel', [OwnerController::class, 'cancel'])->name('checkout-cancel');
+
 
 Route::get('/admin', [AdminController::class, 'index'])->name('admin-index');
 Route::post('/admin/store', [AdminController::class, 'store'])->name('admin-store');

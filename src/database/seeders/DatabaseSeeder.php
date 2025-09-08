@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Owner;
 use App\Models\Reservation;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -25,6 +26,10 @@ class DatabaseSeeder extends Seeder
         Reservation::factory()->visited()->count(4)->create();
         Reservation::factory()->count(20)->create([
             'shop_id' => 1,
+        ]);
+        Reservation::factory()->visited()->count(20)->create([
+            'shop_id' => 1,
+            'date' => Carbon::today(),
         ]);
     }
 }
