@@ -4,7 +4,7 @@
 @php
     $activeTab = request('tab', 'reservation');
 @endphp
-<div class="container px-4 mb-5">
+<div class="container mb-5">
     @if (session('message'))
     <div class="alert alert-success text-success" role="alert">
         {{ session('message') }}
@@ -12,14 +12,14 @@
     @endif
     <h2 class="fs-3 fw-bold mb-4 mt-2">{{ $shop->name }}</h2>
     <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item">
-            <a class="nav-link {{ $activeTab === 'reservation' ? 'active bg-primary text-white' : 'text-black' }}"
+        <li class="nav-item show-text fw-normal">
+            <a class="nav-link p-2 {{ $activeTab === 'reservation' ? 'active bg-primary text-white' : 'text-black' }}"
                 href="{{ route('owner-show', ['shop_id' => $shop->id, 'tab' => 'reservation']) }}">
                 予約一覧
             </a>
         </li>
-        <li class="nav-item">
-            <a class="nav-link {{ $activeTab === 'edit' ? 'active bg-primary text-white' : 'text-black' }}"
+        <li class="nav-item show-text fw-normal">
+            <a class="nav-link p-2 {{ $activeTab === 'edit' ? 'active bg-primary text-white' : 'text-black' }}"
                 href="{{ route('owner-show', ['shop_id' => $shop->id, 'tab' => 'edit']) }}">
                 店舗情報更新
             </a>
@@ -95,63 +95,65 @@
                 </ul>
             </nav>
         </div>
-        <div class="tab-pane fade {{ $activeTab === 'edit' ? 'show active' : '' }} d-flex justify-content-center" id="edit">
-            <x-form title="Edit Shop" enctype="enctype='multipart/form-data'" route="owner-update" params="['shop_id' => $shop->id]" buttonText="更新" class="mt-4 col-md-8 col-12">
-                @method('PATCH')
-                <div class="d-flex align-items-center col-10 mt-3">
-                    <label for="name" class="font-bold col-3">Name</label>
-                    <input type="text" name="name" id="name" placeholder="Shop Name" class="border-0 border-bottom border-black col-9"
-                        value="{{ $shop->name }}">
-                </div>
-                <div class="d-flex align-items-center col-10 mt-3">
-                    <label for="area" class="col-3">Area</label>
-                    <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
-                        <div class="custom-btn d-flex align-items-center justify-content-between">
-                            <p class="show-text fw-normal m-0 select__placeholder text-secondary">
-                                {{ $shop->area->name }}
-                            </p>
-                            <svg class="arrow" viewBox="0 0 12 16">
-                                <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
-                            </svg>
-                        </div>
-                        <ul class="custom-menu-show">
-                            @foreach ($areas as $area)
-                            <li data-value="{{ $area->id }}" class="px-2">{{ $area->name }}</li>
-                            @endforeach
-                        </ul>
-                        <input type="hidden" name="area_id" id="area_id">
+        <div class="tab-pane fade {{ $activeTab === 'edit' ? 'show active' : '' }}" id="edit">
+            <div class="d-flex justify-content-center">
+                <x-form title="Edit Shop" enctype="enctype='multipart/form-data'" route="owner-update" params="['shop_id' => $shop->id]" buttonText="更新" class="mt-4 col-md-8 col-12">
+                    @method('PATCH')
+                    <div class="d-flex align-items-center col-10 mt-3">
+                        <label for="name" class="font-bold col-3">Name</label>
+                        <input type="text" name="name" id="name" placeholder="Shop Name" class="border-0 border-bottom border-black col-9"
+                            value="{{ $shop->name }}">
                     </div>
-                </div>
-                <div class="d-flex align-items-center col-10 mt-3">
-                    <label for="genre" class="col-3">Genre</label>
-                    <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
-                        <div class="custom-btn d-flex align-items-center justify-content-between">
-                            <p class="show-text fw-normal m-0 select__placeholder text-secondary">
-                                {{ $shop->genre->name }}
-                            </p>
-                            <svg class="arrow" viewBox="0 0 12 16">
-                                <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
-                            </svg>
+                    <div class="d-flex align-items-center col-10 mt-3">
+                        <label for="area" class="col-3">Area</label>
+                        <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
+                            <div class="custom-btn d-flex align-items-center justify-content-between">
+                                <p class="show-text fw-normal m-0 select__placeholder text-secondary">
+                                    {{ $shop->area->name }}
+                                </p>
+                                <svg class="arrow" viewBox="0 0 12 16">
+                                    <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
+                                </svg>
+                            </div>
+                            <ul class="custom-menu-show">
+                                @foreach ($areas as $area)
+                                    <li data-value="{{ $area->id }}" class="px-2">{{ $area->name }}</li>
+                                @endforeach
+                            </ul>
+                            <input type="hidden" name="area_id" id="area_id">
                         </div>
-                        <ul class="custom-menu-show">
-                            @foreach ($genres as $genre)
-                                <li data-value="{{ $genre->id }}" class="px-2">{{ $genre->name }}</li>
-                            @endforeach
-                        </ul>
-                        <input type="hidden" name="genre_id" id="genre_id">
                     </div>
-                </div>
-                <div class="d-flex col-10 mt-3 flex-column gap-2">
-                    <label for="image" class="col-3">Image</label>
-                    <img src="{{ asset('storage/shop-img/' . $shop->image) }}" class="w-100 my-sm-4 my-3" id="imagePreview">
-                    <input type="file" name="image" id="image" class="show-text fw-normal" accept="image/*">
-                </div>
-                <div class="d-flex col-10 mt-3 flex-column gap-2">
-                    <label for="detail" class="col-3">Detail</label>
-                    <textarea name="detail" id="detail" cols="30" rows="8"
-                        class="show-text fw-normal py-1 px-2" placeholder="Detail">{{ trim($shop->detail) }}</textarea>
-                </div>
-            </x-form>
+                    <div class="d-flex align-items-center col-10 mt-3">
+                        <label for="genre" class="col-3">Genre</label>
+                        <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
+                            <div class="custom-btn d-flex align-items-center justify-content-between">
+                                <p class="show-text fw-normal m-0 select__placeholder text-secondary">
+                                    {{ $shop->genre->name }}
+                                </p>
+                                <svg class="arrow" viewBox="0 0 12 16">
+                                    <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
+                                </svg>
+                            </div>
+                            <ul class="custom-menu-show">
+                                @foreach ($genres as $genre)
+                                    <li data-value="{{ $genre->id }}" class="px-2">{{ $genre->name }}</li>
+                                @endforeach
+                            </ul>
+                            <input type="hidden" name="genre_id" id="genre_id">
+                        </div>
+                    </div>
+                    <div class="d-flex col-10 mt-3 flex-column gap-2">
+                        <label for="image" class="col-3">Image</label>
+                        <img src="{{ asset('storage/shop-img/' . $shop->image) }}" class="w-100 my-sm-4 my-3" id="imagePreview">
+                        <input type="file" name="image" id="image" class="show-text fw-normal" accept="image/*">
+                    </div>
+                    <div class="d-flex col-10 mt-3 flex-column gap-2">
+                        <label for="detail" class="col-3">Detail</label>
+                        <textarea name="detail" id="detail" cols="30" rows="8"
+                            class="show-text fw-normal py-1 px-2" placeholder="Detail">{{ trim($shop->detail) }}</textarea>
+                    </div>
+                </x-form>
+            </div>
         </div>
     </div>
 </div>

@@ -25,11 +25,11 @@ class AdminController extends Controller
 
         Owner::create($owner);
 
-        return redirect()->route('admin-index')
-            ->with('message', '店舗代表者を登録しました');
+        return redirect()->route('admin-index', ['tab' => 'store'])
+            ->with('message', '店舗代表者を作成しました');
     }
 
-    public function sendNotice(Request $request, NoticeMailService $service)
+    public function send(Request $request, NoticeMailService $service)
     {
         $subject = $request->input('subject');
         $body = $request->input('body');
@@ -38,10 +38,7 @@ class AdminController extends Controller
 
         $service->send($recipients, $subject, $body);
 
-        return back()->with('message', 'メールを送信しました');
+        return redirect()->route('admin-index', ['tab' => 'send'])
+            ->with('message', 'メールを送信しました');
     }
-
-
-    // オーナーの場合　$recipients = $service->getRecipientsForShop(auth()->user()->shop_id);
-
 }
