@@ -45,6 +45,11 @@ class Shop extends Model
         return $this->hasMany(Reservation::class);
     }
 
+    public function owner()
+    {
+        return $this->belongsTo(Owner::class);
+    }
+
     public function scopeAreaSearch($query, $area_id)
     {
         if (!empty($area_id)) {

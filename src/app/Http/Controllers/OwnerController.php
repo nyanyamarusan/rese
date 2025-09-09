@@ -18,8 +18,7 @@ class OwnerController extends Controller
 {
     public function index()
     {
-        //$owner = Auth::guard('owner')->user();
-        $owner = Owner::find(1);
+        $owner = Auth::guard('owner')->user();
         $shops = Shop::where('owner_id', $owner->id)->get();
         $areas = Area::all();
         $genres = Genre::all();
@@ -29,8 +28,7 @@ class OwnerController extends Controller
 
     public function store(Request $request)
     {
-        $owner = Owner::find(1);
-        //$owner = Auth::guard('owner')->user();
+        $owner = Auth::guard('owner')->user();
         $shop = $request->only([
             'name',
             'area_id',
@@ -143,9 +141,9 @@ class OwnerController extends Controller
     public function checkout(Request $request)
     {
         $reservation = Reservation::findOrFail($request->reservation_id);
-        //if ($reservation->shop->owner_id !== Auth::id()) {
-            //abort(403, 'この予約にはアクセスできません');
-        //}
+        if ($reservation->shop->owner_id !== Auth::guard('owner')->user()->id) {
+            abort(403, 'この予約にはアクセスできません');
+        }
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $session = Session::create([

@@ -37,9 +37,6 @@ class LoginRequest extends FormRequest
                 'email' => 'ログイン情報が登録されていません',
             ]);
         }
-
-        Auth::guard('owner')->logout();
-        Auth::guard('admin')->logout();
     }
 
     public function messages(): array
@@ -47,10 +44,8 @@ class LoginRequest extends FormRequest
         return [
             'email.required' => 'メールアドレスを入力してください',
             'email.email' => 'メールアドレスの形式で入力してください',
-            'email.max' => 'メールアドレスは191文字以内で入力してください',
             'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードは8文字以上で入力してください',
-            'password.max' => 'パスワードは191文字以内で入力してください',
         ];
     }
 }

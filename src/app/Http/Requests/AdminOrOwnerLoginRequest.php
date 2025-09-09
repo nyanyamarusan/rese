@@ -35,9 +35,9 @@ class AdminOrOwnerLoginRequest extends FormRequest
 
     public function role(): string
     {
-        if ($this->routeIs('admin.*')) {
+        if ($this->routeIs('admin*')) {
             return 'admin';
-        } elseif ($this->routeIs('owner.*')) {
+        } elseif ($this->routeIs('owner*')) {
             return 'owner';
         }
 
@@ -69,7 +69,6 @@ class AdminOrOwnerLoginRequest extends FormRequest
                 Auth::guard($guard)->logout();
             }
         }
-        Auth::guard('web')->logout();
     }
 
     public function messages(): array
@@ -77,10 +76,8 @@ class AdminOrOwnerLoginRequest extends FormRequest
         return [
             'email.required' => 'メールアドレスを入力してください',
             'email.email' => 'メールアドレスの形式で入力してください',
-            'email.max' => 'メールアドレスは191文字以内で入力してください',
             'password.required' => 'パスワードを入力してください',
             'password.min' => 'パスワードは8文字以上で入力してください',
-            'password.max' => 'パスワードは191文字以内で入力してください',
         ];
     }
 }

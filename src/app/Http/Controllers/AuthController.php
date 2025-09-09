@@ -29,6 +29,9 @@ class AuthController extends Controller
 
     public function login(LoginRequest $request)
     {
+        Auth::guard('admin')->logout();
+        Auth::guard('owner')->logout();
+
         $request->authenticate();
 
         return redirect()->route('index');
@@ -46,6 +49,9 @@ class AuthController extends Controller
 
     public function adminLogin(AdminOrOwnerLoginRequest $request)
     {
+        Auth::guard('owner')->logout();
+        Auth::logout();
+
         $request->authenticate();
 
         return redirect()->route('admin-index');
@@ -53,6 +59,9 @@ class AuthController extends Controller
 
     public function ownerLogin(AdminOrOwnerLoginRequest $request)
     {
+        Auth::guard('admin')->logout();
+        Auth::logout();
+
         $request->authenticate();
 
         return redirect()->route('owner-index');

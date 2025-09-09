@@ -18,8 +18,7 @@ class UserController extends Controller
 {
     public function like($shop_id)
     {
-        //$user = Auth::user()->load('likes');
-        $user = User::find(1)->load('likes');
+        $user = Auth::user()->load('likes');
         $shop = Shop::findOrFail($shop_id);
 
         if ($shop->isLikedBy($user)) {
@@ -51,11 +50,11 @@ class UserController extends Controller
 
     public function mypage()
     {
-        $user = User::find(1)->load('likes');
-        //$user = Auth::user();
+        $user = Auth::user();
         $reservations = $user->reservations()->with('shop', 'review')->get();
         $userLikes = $user->likes()->pluck('shop_id')->toArray();
         $times = [];
+
         return view('mypage', compact('user', 'reservations', 'userLikes', 'times'));
     }
 
