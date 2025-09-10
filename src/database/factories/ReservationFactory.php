@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Shop;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -19,7 +20,7 @@ class ReservationFactory extends Factory
     public function definition(): array
     {
         return [
-            'user_id' => 1,
+            'user_id' => User::factory(),
             'shop_id' => function () {
                 return Shop::inRandomOrder()->first()->id;
             },
@@ -42,13 +43,6 @@ class ReservationFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'visited' => true,
-        ]);
-    }
-
-    public function notVisited(): static
-    {
-        return $this->state(fn (array $attributes) => [
-            'visited' => false,
         ]);
     }
 }

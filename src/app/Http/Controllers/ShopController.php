@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Genre;
-use App\Models\User;
-use App\Models\Reservation;
 use App\Models\Shop;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -37,7 +35,16 @@ class ShopController extends Controller
             ->get();
         $areas = Area::all();
         $genres = Genre::all();
-        return view('index', compact('shops', 'areas', 'genres'));
+
+        $user = Auth::user();
+
+        if ($user) {
+            $userLikes = $user->likes()->pluck('shop_id')->toArray();
+        } else {
+            $userLikes = [];
+        };
+
+        return view('index', compact('shops', 'areas', 'genres', 'userLikes'));
     }
 
     public function detail(Request $request, $shop_id)
@@ -60,6 +67,7 @@ class ShopController extends Controller
         $bookedTimes = $shop->reservations()
             ->where('date', $selectedDateCarbon->toDateString())
             ->pluck('time')
+            ->map(fn ($t) => Carbon::parse($t)->format('H:i'))
             ->toArray();
 
         $start = $shop->open_time->copy();

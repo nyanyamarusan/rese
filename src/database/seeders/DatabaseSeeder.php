@@ -22,12 +22,18 @@ class DatabaseSeeder extends Seeder
             ShopSeeder::class,
             LikeSeeder::class,
         ]);
-        Reservation::factory()->count(2)->create();
-        Reservation::factory()->visited()->count(4)->create();
+        Reservation::factory()->count(2)->create([
+            'user_id' => 1,
+        ]);
+        Reservation::factory()->visited()->count(4)->create([
+            'user_id' => 1,
+        ]);
         Reservation::factory()->count(20)->create([
+            'user_id' => 1,
             'shop_id' => 1,
         ]);
         Reservation::factory()->visited()->count(20)->create([
+            'user_id' => 1,
             'shop_id' => 1,
             'date' => Carbon::today(),
         ]);

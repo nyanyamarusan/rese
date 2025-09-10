@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Models\Area;
 use App\Models\Genre;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Shop extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'area_id',

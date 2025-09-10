@@ -5,16 +5,13 @@ namespace Tests\Feature;
 use App\Models\User;
 use App\Models\Admin;
 use App\Models\Owner;
-use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\VerifyEmail;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Contracts\VerifyEmailViewResponse;
@@ -661,43 +658,42 @@ class AuthTest extends TestCase
         Notification::assertSentTo($user, VerifyEmail::class);
     }
 
-    public function test_show_verification_screen(): void
+    public function test_show_verification_screen_and_verify(): void
     {
-        Http::fake([
-            'http://localhost:8025/' => Http::response('mailhog mock response', 200),
-        ]);
+        Event::fake();
         $user = User::factory()->unverified()->create();
 
         $this->actingAs($user);
         $response = $this->get('/email/verify');
         $response->assertStatus(200);
-
         $response->assertSeeText('認証する');
-        $response->assertSee('http://localhost/email/verify/');
 
-        $mailhogResponse = Http::get('http://localhost:8025/');
-        $this->assertEquals(200, $mailhogResponse->status());
-    }
-
-    public function test_user_is_redirected_to_thanks_after_verification(): void
-    {
-        Event::fake();
-        $user = User::factory()->unverified()->create();
-
-        $verificationUrl = URL::temporarySignedRoute(
+        $verifyUrl = URL::temporarySignedRoute(
             'verification.verify',
-            Carbon::now()->addMinutes(60),
-            [
-                'id' => $user->id,
-                'hash' => sha1($user->email),
-            ]
+            now()->addMinutes(60),
+            ['id' => $user->id, 'hash' => sha1($user->email)]
         );
 
-        $response = $this->actingAs($user)->get($verificationUrl);
-        $response->assertRedirect('/thanks');
+        $response->assertSee($verifyUrl);
+
+        $verifyResponse = $this->actingAs($user)->get($verifyUrl);
+        $verifyResponse->assertRedirect('/thanks');
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
         Event::assertDispatched(Verified::class);
+    }
+
+    public function test_verification_email_can_be_resent()
+    {
+        Notification::fake();
+
+        $user = User::factory()->unverified()->create();
+
+        $this->actingAs($user)
+        ->post(route('verification.send'))
+        ->assertRedirect();
+
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 
     public function test_thanks_goes_to_login(): void
