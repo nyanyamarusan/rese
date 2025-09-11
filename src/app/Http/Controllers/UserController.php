@@ -86,8 +86,8 @@ class UserController extends Controller
 
         $bookedTimes = $shop->reservations()
             ->where('date', $selectedDateCarbon->toDateString())
-            ->where('id', '!=', $reservation_id)
             ->pluck('time')
+            ->map(fn ($t) => Carbon::parse($t)->format('H:i'))
             ->toArray();
 
         $start = $shop->open_time->copy();
