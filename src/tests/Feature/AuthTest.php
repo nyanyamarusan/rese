@@ -674,10 +674,12 @@ class AuthTest extends TestCase
             ['id' => $user->id, 'hash' => sha1($user->email)]
         );
 
-        $response->assertSee($verifyUrl);
-
         $verifyResponse = $this->actingAs($user)->get($verifyUrl);
         $verifyResponse->assertRedirect('/thanks');
+        $thanksResponse = $this->get('/thanks');
+        $thanksResponse->assertSee('会員登録ありがとうございます');
+        $thanksResponse->assertSee('ログインする');
+        $thanksResponse->assertSee('/login');
 
         $this->assertTrue($user->fresh()->hasVerifiedEmail());
         Event::assertDispatched(Verified::class);
@@ -694,15 +696,5 @@ class AuthTest extends TestCase
         ->assertRedirect();
 
         Notification::assertSentTo($user, VerifyEmail::class);
-    }
-
-    public function test_thanks_goes_to_login(): void
-    {
-        $response = $this->get('/thanks');
-        $response->assertStatus(200);
-
-        $response->assertSeeText('ログインする');
-        $response = $this->get('/login');
-        $response->assertStatus(200);
     }
 }

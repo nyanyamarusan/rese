@@ -37,6 +37,7 @@ class UserController extends Controller
         $reservationData = $request->only([
             'date',
             'time',
+            'number',
         ]);
 
         $reservationData['user_id'] = $user->id;

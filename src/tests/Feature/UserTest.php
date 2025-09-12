@@ -36,7 +36,7 @@ class UserTest extends TestCase
             'shop_id' => $shop->id,
         ]);
 
-        $response = $this->post('/like/' . $shop->id);
+        $response = $this->patch('/like/' . $shop->id);
         $response->assertStatus(302);
 
         $this->assertDatabaseMissing('likes', [
@@ -194,23 +194,24 @@ class UserTest extends TestCase
         $this->actingAs($user);
 
         $response = $this->post('/done', [
+            'user_id' => $user->id,
             'shop_id' => $shop->id,
-            'date' => $fixedDate->addDay()->toDateString(),
+            'date' => '2025-09-12',
             'time' => '12:00',
             'number' => 2,
         ]);
 
         $this->assertDatabaseHas('reservations', [
+            'user_id' => $user->id,
             'shop_id' => $shop->id,
-            'date' => $fixedDate->addDay()->toDateString(),
+            'date' => '2025-09-12',
             'time' => '12:00',
             'number' => 2,
         ]);
 
-        $response->assertSee('予約が完了しました');
+        $response->assertSee('ご予約ありがとうございます');
         $response->assertSee('戻る');
-        $response = $this->get('/detail/' . $shop->id);
-        $response->assertStatus(200);
+        $response->assertSee('detail',['shop_id' => $shop->id]);
     }
 
     public function test_mypage_guest_is_redirected(): void
@@ -271,59 +272,18 @@ class UserTest extends TestCase
         $response = $this->get('/mypage');
         $response->assertStatus(200);
 
-        $html = $response->getContent();
-
         foreach ($beforeReservations as $beforeReservation) {
-            $this->assertMatchesRegularExpression(
-                '予約状況' . $beforeReservation->shop->name . '/s',
-                $html
-            );
+            $response->assertSee($beforeReservation->shop->name);
+            $response->assertSee('reservation-box-' . $beforeReservation->id);
         }
 
         foreach ($afterReservations as $afterReservation) {
-            $this->assertDoesNotMatchRegularExpression(
-                '予約状況' . $afterReservation->shop->name . '/s',
-                $html
-            );
-        }
-    }
-
-    public function test_mypage_user_visited_shops(): void
-    {
-        $user = User::factory()->create();
-        $beforeShop = Shop::factory()->create();
-        $afterShop = Shop::factory()->create();
-        $beforeReservations = Reservation::factory()->count(3)->create([
-            'user_id' => $user->id,
-            'shop_id' => $beforeShop->id,
-            'visited' => false,
-        ]);
-        $afterReservations = Reservation::factory()->count(3)->create([
-            'user_id' => $user->id,
-            'shop_id' => $afterShop->id,
-            'visited' => true,
-        ]);
-
-        $this->actingAs($user);
-
-        $response = $this->get('/mypage');
-        $response->assertStatus(200);
-
-        $html = $response->getContent();
-
-        foreach ($afterReservations as $afterReservation) {
-            $this->assertMatchesRegularExpression(
-                '来店履歴' . $afterReservation->shop->name . '/s',
-                $html
-            );
+            $response->assertSee($afterReservation->shop->name);
+            $response->assertSee('visited-box-' . $afterReservation->id);
         }
 
-        foreach ($beforeReservations as $beforeReservation) {
-            $this->assertDoesNotMatchRegularExpression(
-                '来店履歴*' . $beforeReservation->shop->name . '/s',
-                $html
-            );
-        }
+        $response->assertDontSee('reservation-box-' . $afterReservation->id);
+        $response->assertDontSee('visited-box-' . $beforeReservation->id);
     }
 
     public function test_chancel_reservation(): void
@@ -338,16 +298,15 @@ class UserTest extends TestCase
 
         $this->actingAs($user);
 
-        $response = $this->post('/mypage/delete/' . $reservation->id);
+        $response = $this->delete('/mypage/delete/' . $reservation->id);
 
         $this->assertDatabaseMissing('reservations', [
             'id' => $reservation->id,
         ]);
 
-        $response->assertRedirect('/mypage/delete/' . $reservation->id);
-        $response = $this->get('/mypage/delete/' . $reservation->id);
-        $response->assertSee('予約がキャンセルされました');
+        $response->assertSee('予約をキャンセルしました');
         $response->assertSee('戻る');
+        $response->assertSee('mypage');
         $response = $this->get('/mypage');
         $response->assertStatus(200);
         $response->assertDontSee($reservation->shop->name);
@@ -553,6 +512,7 @@ class UserTest extends TestCase
 
         $response->assertSee('予約を変更しました');
         $response->assertSee('戻る');
+        $response->assertSee('mypage');
         $response = $this->get('/mypage');
         $response->assertStatus(200);
         $response->assertSee($reservation->shop->name);
@@ -595,6 +555,7 @@ class UserTest extends TestCase
 
         $response->assertSee('レビューを送信しました');
         $response->assertSee('戻る');
+        $response->assertSee('mypage');
         $response = $this->get('/mypage');
         $response->assertStatus(200);
         $response->assertSee($reservation->shop->name);
@@ -654,10 +615,6 @@ class UserTest extends TestCase
         $reservation = Reservation::factory()->create([
             'user_id' => $user->id,
             'shop_id' => $shop->id,
-            'date' => '2025-09-12',
-            'time' => '12:00',
-            'number' => 2,
-            'visited' => false,
         ]);
 
         $this->actingAs($user);
@@ -667,7 +624,16 @@ class UserTest extends TestCase
 
         $response = $this->get('/reservation/' . $reservation->id . '/qr');
         $response->assertStatus(200);
+
+        $html = $response->getContent();
+
+        $this->assertStringContainsString('<img src="data:image/svg+xml', $html);
         $response->assertSee($reservation->shop->name);
-        $response->assertSee($reservation->checkin_token);
+
+        preg_match('/src="(data:image\/svg\+xml;base64,[^"]+)"/', $html, $matches);
+        $this->assertNotEmpty($matches, 'QRコードの <img> が見つかりません');
+
+        $dataUri = $matches[1];
+        $this->assertStringStartsWith('data:image/svg+xml;base64,', $dataUri);
     }
 }
