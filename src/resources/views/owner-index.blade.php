@@ -77,6 +77,44 @@
                         <input type="hidden" name="genre_id" id="genre_id">
                     </div>
                 </div>
+                <div class="d-flex align-items-center col-10 mt-3">
+                    <label for="open_time" class="col-3">Open Time</label>
+                    <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
+                        <div class="custom-btn d-flex align-items-center justify-content-between">
+                            <p class="show-text fw-normal m-0 select__placeholder">
+                                Open Time
+                            </p>
+                            <svg class="arrow" viewBox="0 0 12 16">
+                                <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
+                            </svg>
+                        </div>
+                        <ul class="custom-menu-show">
+                            @foreach ($times as $time)
+                                <li data-value="{{ $time }}" class="px-2">{{ $time }}</li>
+                            @endforeach
+                        </ul>
+                        <input type="hidden" name="open_time" id="open_time">
+                    </div>
+                </div>
+                <div class="d-flex align-items-center col-10 mt-3">
+                    <label for="close_time" class="col-3">Close Time</label>
+                    <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
+                        <div class="custom-btn d-flex align-items-center justify-content-between">
+                            <p class="show-text fw-normal m-0 select__placeholder">
+                                Close Time
+                            </p>
+                            <svg class="arrow" viewBox="0 0 12 16">
+                                <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
+                            </svg>
+                        </div>
+                        <ul class="custom-menu-show">
+                            @foreach ($times as $time)
+                                <li data-value="{{ $time }}" class="px-2">{{ $time }}</li>
+                            @endforeach
+                        </ul>
+                        <input type="hidden" name="close_time" id="close_time">
+                    </div>
+                </div>
                 <div class="d-flex col-10 mt-3 flex-column gap-2">
                     <label for="image" class="col-3">Image</label>
                     <img src="" class="w-100 my-sm-4 my-3 d-none" id="imagePreview">

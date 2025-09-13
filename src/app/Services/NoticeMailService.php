@@ -2,21 +2,22 @@
 
 namespace App\Services;
 
-use App\Models\User;
-use Illuminate\Support\Facades\Mail;
 use App\Mail\NoticeMail;
+use App\Models\User;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Mail;
 
 class NoticeMailService
 {
-    public function send(array $recipients, string $subject, string $body)
+    public function send(Collection $recipients, string $subject, string $body)
     {
         foreach ($recipients as $user) {
             Mail::to($user->email)->send(new NoticeMail($subject, $body));
         }
     }
 
-    public function getRecipientsForAdmin(): array
+    public function getRecipientsForAdmin()
     {
-        return User::all()->toArray();
+        return User::all();
     }
 }

@@ -20,6 +20,7 @@ class Reservation extends Model
         'number',
         'checkin_token',
         'visited',
+        'reminded',
         'paid',
     ];
 
@@ -27,6 +28,7 @@ class Reservation extends Model
         'date' => 'date',
         'time' => 'datetime:H:i',
         'visited' => 'boolean',
+        'reminded' => 'boolean',
         'paid' => 'boolean',
     ];
 

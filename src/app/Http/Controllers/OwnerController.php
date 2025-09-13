@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Area;
 use App\Models\Genre;
-use App\Models\Owner;
 use App\Models\Reservation;
 use App\Models\Shop;
 use Carbon\Carbon;
+use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +23,13 @@ class OwnerController extends Controller
         $areas = Area::all();
         $genres = Genre::all();
 
-        return view('owner-index', compact('shops', 'areas', 'genres'));
+        $period = CarbonPeriod::create('00:00', '60 minutes', '23:00');
+        $times = [];
+        foreach ($period as $time) {
+            $times[] = $time->format('H:i');
+        }
+
+        return view('owner-index', compact('shops', 'areas', 'genres', 'times'));
     }
 
     public function store(Request $request)
@@ -34,6 +40,8 @@ class OwnerController extends Controller
             'area_id',
             'genre_id',
             'detail',
+            'open_time',
+            'close_time',
         ]);
 
         $image = $request->file('image')
@@ -62,6 +70,12 @@ class OwnerController extends Controller
         $areas = Area::all();
         $genres = Genre::all();
 
+        $period = CarbonPeriod::create('00:00', '60 minutes', '23:00');
+        $times = [];
+        foreach ($period as $time) {
+            $times[] = $time->format('H:i');
+        }
+
         $today = Carbon::today();
 
         $checkouts = Reservation::where('shop_id', $shop_id)
@@ -74,7 +88,7 @@ class OwnerController extends Controller
             ->paginate(6)
             ->appends(['tab' => 'checkout']);
 
-        return view('owner-show', compact('shop', 'reservations', 'areas', 'genres', 'checkouts'));
+        return view('owner-show', compact('shop', 'reservations', 'areas', 'genres', 'checkouts', 'times'));
     }
 
     public function update(Request $request, $shop_id)
@@ -86,6 +100,8 @@ class OwnerController extends Controller
             'area_id',
             'genre_id',
             'detail',
+            'open_time',
+            'close_time',
         ]);
 
         $image = $request->file('image')

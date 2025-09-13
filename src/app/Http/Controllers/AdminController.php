@@ -19,6 +19,7 @@ class AdminController extends Controller
         $owner = $request->only([
             'name',
             'email',
+            'password',
         ]);
 
         $owner['password'] = Hash::make($owner['password']);

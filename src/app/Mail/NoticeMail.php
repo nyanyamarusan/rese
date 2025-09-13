@@ -42,7 +42,7 @@ class NoticeMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'admin-index',
+            view: 'email',
         );
     }
 
