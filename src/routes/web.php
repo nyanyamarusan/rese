@@ -44,7 +44,6 @@ Route::middleware('auth:owner')->group(function () {
     Route::get('/owner/checkin/{checkin_token}', [OwnerController::class, 'checkin'])->name('checkin');
     Route::post('/owner/checkout', [OwnerController::class, 'checkout'])->name('checkout');
     Route::get('/owner/checkout/success', [OwnerController::class, 'success'])->name('checkout-success');
-    Route::get('/owner/checkout/cancel', [OwnerController::class, 'cancel'])->name('checkout-cancel');
 });
 
 Route::middleware('auth:admin')->group(function () {

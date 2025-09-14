@@ -57,7 +57,10 @@ class OwnerController extends Controller
 
     public function show($shop_id)
     {
-        $shop = Shop::with(['area', 'genre'])->findOrFail($shop_id);
+        $owner = Auth::guard('owner')->user();
+        $shop = Shop::with(['area', 'genre'])
+            ->where('owner_id', $owner->id)
+            ->findOrFail($shop_id);
 
         $reservations = Reservation::where('shop_id', $shop_id)
             ->where('visited', false)
@@ -93,7 +96,8 @@ class OwnerController extends Controller
 
     public function update(Request $request, $shop_id)
     {
-        $shop = Shop::findOrFail($shop_id);
+        $owner = Auth::guard('owner')->user();
+        $shop = Shop::where('owner_id', $owner->id)->findOrFail($shop_id);
 
         $shopData = $request->only([
             'name',
@@ -125,11 +129,11 @@ class OwnerController extends Controller
 
     public function checkin($checkin_token)
     {
-        $reservation = Reservation::where('checkin_token', $checkin_token)->firstOrFail();
-
-        if (Auth::guard('owner')->user()->id !== $reservation->shop->owner_id) {
-            abort(403, 'この店舗の予約ではありません');
-        }
+        $owner = Auth::guard('owner')->user();
+        $shop = Shop::where('owner_id', $owner->id)->firstOrFail();
+        $reservation = Reservation::where('checkin_token', $checkin_token)
+            ->where('shop_id', $shop->id)
+            ->firstOrFail();
 
         if ($reservation->visited) {
             return redirect()->route('owner-show', [
@@ -156,10 +160,10 @@ class OwnerController extends Controller
 
     public function checkout(Request $request)
     {
-        $reservation = Reservation::findOrFail($request->reservation_id);
-        if ($reservation->shop->owner_id !== Auth::guard('owner')->user()->id) {
-            abort(403, 'この予約にはアクセスできません');
-        }
+        $owner = Auth::guard('owner')->user();
+        $shop = Shop::where('owner_id', $owner->id)->firstOrFail();
+        $reservation = Reservation::where('shop_id', $shop->id)->findOrFail($request->reservation_id);
+
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
         $session = Session::create([
@@ -176,8 +180,10 @@ class OwnerController extends Controller
             ]],
             'mode' => 'payment',
             'customer_email' => $reservation->user->email,
-            'success_url' => route('checkout-success', ['reservation' => $reservation->id]),
-            'cancel_url' => route('checkout-cancel', ['reservation' => $reservation->id]),
+            'success_url' => route('checkout-success', ['session_id' => '{CHECKOUT_SESSION_ID}']),
+            'metadata' => [
+                'reservation_id' => $reservation->id,
+            ],
         ]);
 
         return redirect($session->url);
@@ -185,24 +191,30 @@ class OwnerController extends Controller
 
     public function success(Request $request)
     {
-        $reservation = Reservation::findOrFail($request->reservation);
-        $reservation->update([
-            'paid' => true,
-        ]);
+        $owner = Auth::guard('owner')->user();
+        $shop = Shop::where('owner_id', $owner->id)->firstOrFail();
+
+        $session_id = $request->session_id;
+
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+        $session = Session::retrieve($session_id);
+        $reservation_id = $session->metadata->reservation_id;
+
+        if ($session->payment_status !== 'paid') {
+            return redirect()->route('owner-show', [
+                'shop_id' => $shop->id,
+                'tab' => 'checkout',
+            ])->with('error', '支払いが完了していません');
+        }
+
+        $reservation = Reservation::where('shop_id', $shop->id)
+            ->findOrFail($reservation_id);
+
+        $reservation->update(['paid' => true]);
 
         return redirect()->route('owner-show', [
-            'shop_id' => $reservation->shop_id,
+            'shop_id' => $shop->id,
             'tab' => 'checkout',
-        ]);
-    }
-
-    public function cancel(Request $request)
-    {
-        $reservation = Reservation::findOrFail($request->reservation_id);
-
-        return redirect()->route('owner-show', [
-            'shop_id' => $reservation->shop_id,
-            'tab' => 'checkout',
-        ]);
+        ])->with('success', '支払いが完了しました');
     }
 }
