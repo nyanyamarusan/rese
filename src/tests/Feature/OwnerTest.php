@@ -7,6 +7,7 @@ use App\Models\Genre;
 use App\Models\Owner;
 use App\Models\Reservation;
 use App\Models\Shop;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -25,6 +26,7 @@ class OwnerTest extends TestCase
             'owner_id' => $owner->id,
         ]);
         $otherShop = Shop::factory()->create([
+            'name' => 'other shop',
             'owner_id' => $otherOwner->id,
         ]);
 
@@ -97,15 +99,19 @@ class OwnerTest extends TestCase
 
     public function test_reservation_list(): void
     {
+        Carbon::setTestNow(Carbon::create('2025-09-02'));
+
         $owner = Owner::factory()->create();
         $shop = Shop::factory()->create([
             'owner_id' => $owner->id,
         ]);
         $reservation = Reservation::factory()->create([
             'shop_id' => $shop->id,
+            'date' => '2025-09-10',
         ]);
         $visitedReservation = Reservation::factory()->create([
             'shop_id' => $shop->id,
+            'date' => '2025-09-01',
             'visited' => true,
         ]);
 
@@ -115,10 +121,9 @@ class OwnerTest extends TestCase
         $response->assertStatus(200);
 
         $response->assertSee($reservation->shop->name);
-        $response->assertSee($reservation->date);
+        $response->assertSee($reservation->date->format('Y-m-d'));
 
-        $response->assertDontSee($visitedReservation->shop->name);
-        $response->assertDontSee($visitedReservation->date);
+        $response->assertDontSee($visitedReservation->date->format('Y-m-d'));
     }
 
     public function test_cannot_access_other_owner_shop(): void
@@ -185,7 +190,10 @@ class OwnerTest extends TestCase
         ]);
 
         $response->assertStatus(302);
-        $response->assertSessionHas('message', '店舗情報を更新しました');
+        $response->assertSessionHas([
+            'status' => 'success',
+            'message' => '店舗情報を更新しました',
+        ]);
     }
 
     public function test_checkin_success(): void
@@ -201,18 +209,19 @@ class OwnerTest extends TestCase
         $this->actingAs($owner, 'owner');
 
         $response = $this->get('/owner/checkin/' . $reservation->checkin_token);
-        $response->assertStatus(200);
+        $response->assertStatus(302);
 
-        $reservation->refresh();
         $this->assertDatabaseHas('reservations', [
             'id' => $reservation->id,
             'visited' => true,
         ]);
 
         $response->assertRedirect('/owner/show/' . $shop->id . '?tab=reservation');
-        $response->assertSessionHas('message', '来店確認が完了しました');
+        $response->assertSessionHas([
+            'status' => 'success',
+            'message' => '来店確認が完了しました',
+        ]);
     }
-
 
     public function test_checkin_invalid_token(): void
     {
@@ -238,10 +247,13 @@ class OwnerTest extends TestCase
         $this->actingAs($owner, 'owner');
 
         $response = $this->get('/owner/checkin/' . $reservation->checkin_token);
-        $response->assertStatus(400);
+        $response->assertStatus(302);
 
         $response->assertRedirect('/owner/show/' . $shop->id . '?tab=reservation');
-        $response->assertSessionHas('message', 'すでにチェックイン済みです');
+        $response->assertSessionHas([
+            'status' => 'error',
+            'message' => 'すでにチェックイン済みです',
+        ]);
     }
 
     public function test_checkout(): void
@@ -255,6 +267,7 @@ class OwnerTest extends TestCase
         ]);
         $visitedReservation = Reservation::factory()->create([
             'shop_id' => $shop->id,
+            'date' => Carbon::today(),
             'visited' => true,
         ]);
         $checkoutReservation = Reservation::factory()->create([
@@ -268,13 +281,10 @@ class OwnerTest extends TestCase
         $response = $this->get('/owner/show/' . $shop->id . '?tab=checkout');
         $response->assertStatus(200);
 
-        $response->assertSee($visitedReservation->shop->name);
-        $response->assertSee($visitedReservation->date);
+        $response->assertSee('checkout-box-' . $visitedReservation->id);
 
-        $response->assertDontSee($reservation->shop->name);
-        $response->assertDontSee($reservation->date);
-        $response->assertDontSee($checkoutReservation->shop->name);
-        $response->assertDontSee($checkoutReservation->date);
+        $response->assertDontSee('checkout-box-' . $reservation->id);
+        $response->assertDontSee('checkout-box-' . $checkoutReservation->id);
     }
 
     public function test_checkout_success(): void
@@ -299,7 +309,7 @@ class OwnerTest extends TestCase
         $mockSession->shouldReceive('retrieve')->with('cs_test_123')->andReturn((object)[
             'id' => 'cs_test_123',
             'payment_status' => 'paid',
-            'metadata' => ['reservation_id' => $reservation->id],
+            'metadata' => (object)['reservation_id' => $reservation->id],
         ]);
 
         $response = $this->post('/owner/checkout', [
@@ -308,12 +318,48 @@ class OwnerTest extends TestCase
         ]);
 
         $response->assertRedirect('https://checkout.stripe.com/pay/cs_test_123');
+        $response = $this->get('/owner/checkout/success?session_id=cs_test_123');
 
-        $response = $this->followingRedirects()->get('/payment/success?session_id=cs_test_123');
-        $response->assertSee('支払いが完了しました');
+        $response->assertRedirect('/owner/show/' . $shop->id . '?tab=checkout');
+        $response->assertSessionHas([
+            'status' => 'success',
+            'message' => '支払いが完了しました',
+        ]);
 
         $reservation->refresh();
         $this->assertTrue($reservation->paid);
+    }
+
+    public function test_checkout_failure(): void
+    {
+        $owner = Owner::factory()->create();
+        $shop = Shop::factory()->create([
+            'owner_id' => $owner->id,
+        ]);
+        $reservation = Reservation::factory()->create([
+            'shop_id' => $shop->id,
+            'visited' => true,
+        ]);
+
+        $this->actingAs($owner, 'owner');
+
+        $mockSession = Mockery::mock('alias:Stripe\Checkout\Session');
+        $mockSession->shouldReceive('retrieve')->with('cs_test_fail')->andReturn((object)[
+            'id' => 'cs_test_fail',
+            'payment_status' => 'unpaid',
+            'metadata' => (object)['reservation_id' => $reservation->id],
+        ]);
+
+        $response = $this->get('/owner/checkout/success?session_id=cs_test_fail');
+
+        $response->assertRedirect('/owner/show/' . $shop->id . '?tab=checkout');
+        $response->assertSessionHas([
+            'status' => 'error',
+            'message' => '支払いが完了していません',
+        ]);
+
+        $reservation->refresh();
+        $this->assertFalse($reservation->paid);
     }
 
     protected function tearDown(): void

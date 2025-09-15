@@ -204,7 +204,10 @@ class OwnerController extends Controller
             return redirect()->route('owner-show', [
                 'shop_id' => $shop->id,
                 'tab' => 'checkout',
-            ])->with('error', '支払いが完了していません');
+            ])->with([
+                'status' => 'error',
+                'message' => '支払いが完了していません',
+            ]);
         }
 
         $reservation = Reservation::where('shop_id', $shop->id)
@@ -215,6 +218,9 @@ class OwnerController extends Controller
         return redirect()->route('owner-show', [
             'shop_id' => $shop->id,
             'tab' => 'checkout',
-        ])->with('success', '支払いが完了しました');
+        ])->with([
+            'status' => 'success',
+            'message' => '支払いが完了しました',
+        ]);
     }
 }

@@ -209,7 +209,7 @@
             <div class="row row-cols-1 row-cols-md-3 row-cols-xl-4 g-3 mb-5 mt-3">
                 @foreach ($checkouts as $index => $checkout)
                 <div class="col">
-                    <div class="card shadow-right-bottom rounded-1 p-lg-2" id="reservation-box-{{ $checkout->id }}">
+                    <div class="card shadow-right-bottom rounded-1 p-lg-2" id="checkout-box-{{ $checkout->id }}">
                         <div class="card-body">
                             <form action="{{ route('checkout') }}" method="POST">
                                 @csrf

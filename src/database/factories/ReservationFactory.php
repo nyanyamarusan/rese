@@ -36,6 +36,8 @@ class ReservationFactory extends Factory
             'number' => $this->faker->numberBetween(1, 10),
             'checkin_token' => Str::uuid(),
             'visited' => false,
+            'reminded' => false,
+            'paid' => false,
         ];
     }
 
