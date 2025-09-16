@@ -45,7 +45,7 @@ class OwnerController extends Controller
         ]);
 
         $image = $request->file('image')
-            ->store('shop-img', 'public');
+            ->store('shop-img', env('FILESYSTEM_DISK', 'public'));
         $shop['image'] = basename($image);
         $shop['owner_id'] = $owner->id;
 
@@ -109,11 +109,11 @@ class OwnerController extends Controller
         ]);
 
         $image = $request->file('image')
-            ->store('shop-img', 'public');
+            ->store('shop-img', env('FILESYSTEM_DISK', 'public'));
         $shopData['image'] = basename($image);
         if ($shop->image) {
             $image = 'shop-img/' . $shop->image;
-            Storage::disk('public')->delete($image);
+            Storage::disk(env('FILESYSTEM_DISK', 'public'))->delete($image);
         }
 
         $shop->update($shopData);
