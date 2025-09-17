@@ -41,7 +41,9 @@
                     @if (Auth::check())
                         <form action="/logout" method="post">
                             @csrf
-                            <li class="nav-item"><button type="submit" class="nav-link border-0 text-primary fw-medium text-center pt-0">Logout</button></li>
+                            <li class="nav-item d-flex justify-content-center">
+                                <button type="submit" class="nav-link border-0 text-primary fw-medium pt-0">Logout</button>
+                            </li>
                         </form>
                         <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="/mypage">MyPage</a></li>
                     @else

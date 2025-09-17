@@ -14,9 +14,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->call(UserSeeder::class);
         Owner::factory()->count(19)->create();
         $this->call([
-            UserSeeder::class,
             AreaSeeder::class,
             GenreSeeder::class,
             ShopSeeder::class,
@@ -28,11 +28,11 @@ class DatabaseSeeder extends Seeder
         Reservation::factory()->visited()->count(4)->create([
             'user_id' => 1,
         ]);
-        Reservation::factory()->count(20)->create([
+        Reservation::factory()->count(10)->create([
             'user_id' => 1,
             'shop_id' => 1,
         ]);
-        Reservation::factory()->visited()->count(20)->create([
+        Reservation::factory()->visited()->count(10)->create([
             'user_id' => 1,
             'shop_id' => 1,
             'date' => Carbon::today(),

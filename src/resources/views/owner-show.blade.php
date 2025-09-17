@@ -120,7 +120,7 @@
                         <label for="area" class="col-3">Area</label>
                         <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
                             <div class="custom-btn d-flex align-items-center justify-content-between">
-                                <p class="show-text fw-normal m-0 select__placeholder text-secondary">
+                                <p class="show-text fw-normal m-0 select__placeholder">
                                     {{ $shop->area->name }}
                                 </p>
                                 <svg class="arrow" viewBox="0 0 12 16">
@@ -139,7 +139,7 @@
                         <label for="genre" class="col-3">Genre</label>
                         <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
                             <div class="custom-btn d-flex align-items-center justify-content-between">
-                                <p class="show-text fw-normal m-0 select__placeholder text-secondary">
+                                <p class="show-text fw-normal m-0 select__placeholder">
                                     {{ $shop->genre->name }}
                                 </p>
                                 <svg class="arrow" viewBox="0 0 12 16">
@@ -159,7 +159,7 @@
                         <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
                             <div class="custom-btn d-flex align-items-center justify-content-between">
                                 <p class="show-text fw-normal m-0 select__placeholder">
-                                    {{ $shop->open_time }}
+                                    {{ $shop->open_time->format('H:i') }}
                                 </p>
                                 <svg class="arrow" viewBox="0 0 12 16">
                                     <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
@@ -178,7 +178,7 @@
                         <div class="custom-dropdown px-2 py-1 rounded-1 border col-6 col-md-4">
                             <div class="custom-btn d-flex align-items-center justify-content-between">
                                 <p class="show-text fw-normal m-0 select__placeholder">
-                                    {{ $shop->close_time }}
+                                    {{ $shop->close_time->format('H:i') }}
                                 </p>
                                 <svg class="arrow" viewBox="0 0 12 16">
                                     <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
