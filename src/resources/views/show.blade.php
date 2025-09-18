@@ -115,6 +115,8 @@
                 btn.querySelector('.select__placeholder').style.color = '';
                 input.value = item.dataset.value;
                 menu.style.display = 'none';
+                window.getSelection().removeAllRanges();
+                document.activeElement.blur();
             });
         });
         document.addEventListener('click', (e) => {
@@ -137,17 +139,6 @@
             const val = this.dataset.value;
             numberInput.value = val;
             numberText.textContent = val + '人';
-
-            if (document.activeElement) document.activeElement.blur();
-
-            const sel = window.getSelection ? window.getSelection() : (document.selection || null);
-            if (sel) {
-                if (sel.removeAllRanges) sel.removeAllRanges();
-                else if (sel.empty) sel.empty();
-            }
-
-            document.body.tabIndex = -1;
-            document.body.focus();
         });
     });
 
@@ -184,6 +175,8 @@
                         dropdownBtnText.textContent = t;
                         document.getElementById('timeText').textContent = t;
                         timeList.style.display = 'none';
+                        window.getSelection().removeAllRanges();
+                        document.activeElement.blur();
                     });
                     timeList.appendChild(li);
                 });

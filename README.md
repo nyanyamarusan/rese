@@ -69,6 +69,10 @@
     - SESSION_DRIVER=file
     - CACHE_STORE=file
 
+- ファイルシステム設定
+
+    - FILESYSTEM_DISK=public
+
 - mailhog 環境変数
 
     - MAIL_MAILER=smtp
@@ -117,7 +121,6 @@
 - ファイルシステム設定
 
     - FILESYSTEM_DISK=s3
-    - FILESYSTEM_DRIVER=s3
 
 - メール設定
 

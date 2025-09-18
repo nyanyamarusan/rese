@@ -299,6 +299,8 @@
                 btn.querySelector('.select__placeholder').style.color = '';
                 input.value = item.dataset.value;
                 menu.style.display = 'none';
+                window.getSelection().removeAllRanges();
+                document.activeElement.blur();
             });
         });
         document.addEventListener('click', (e) => {

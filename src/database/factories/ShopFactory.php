@@ -19,13 +19,20 @@ class ShopFactory extends Factory
      */
     public function definition(): array
     {
+        $openHours = range(8, 12);
+        $openHour = $openHours[array_rand($openHours)];
+        $open_time = sprintf('%02d:00', $openHour);
+        $closeHours = range(19, 23);
+        $closeHour = $closeHours[array_rand($closeHours)];
+        $close_time = sprintf('%02d:00', $closeHour);
+
         return [
             'name' => fake()->company(),
             'area_id' => Area::factory(),
             'genre_id' => Genre::factory(),
             'owner_id' => Owner::factory(),
-            'open_time' => fake()->dateTimeBetween('08:00', '12:00')->format('H:i'),
-            'close_time' => fake()->dateTimeBetween('19:00', '23:00')->format('H:i'),
+            'open_time' => $open_time,
+            'close_time' => $close_time,
             'image' => fake()->imageUrl(),
             'detail' => fake()->text(),
         ];

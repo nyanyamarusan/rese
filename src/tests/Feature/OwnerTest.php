@@ -146,8 +146,12 @@ class OwnerTest extends TestCase
     public function test_update_shop(): void
     {
         $owner = Owner::factory()->create();
+        $oldImage = UploadedFile::fake()->create('old-image.jpg');
+        Storage::disk('public')->putFileAs('shop-img', $oldImage, $oldImage->hashName());
+
         $shop = Shop::factory()->create([
             'owner_id' => $owner->id,
+            'image' => $oldImage->hashName(),
         ]);
 
         $this->actingAs($owner, 'owner');
@@ -158,8 +162,8 @@ class OwnerTest extends TestCase
         $response->assertSee($shop->name);
         $response->assertSee($shop->area->name);
         $response->assertSee($shop->genre->name);
-        $response->assertSee($shop->open_time);
-        $response->assertSee($shop->close_time);
+        $response->assertSee($shop->open_time->format('H:i'));
+        $response->assertSee($shop->close_time->format('H:i'));
         $response->assertSee($shop->detail);
 
         $image = UploadedFile::fake()->create('image.jpg');
@@ -188,6 +192,14 @@ class OwnerTest extends TestCase
             'image' => $image->hashName(),
             'detail' => 'detail',
         ]);
+
+        $this->assertDatabaseMissing('shops', [
+            'image' => $oldImage->hashName(),
+        ]);
+
+        $shop = $shop->fresh();
+        Storage::disk('public')->assertExists('shop-img/' . $shop->image);
+        Storage::disk('public')->assertMissing('shop-img/' . $oldImage->hashName());
 
         $response->assertStatus(302);
         $response->assertSessionHas([

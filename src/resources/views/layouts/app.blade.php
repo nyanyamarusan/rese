@@ -36,19 +36,30 @@
                 <button type="button" class="btn btn-primary border-0 shadow-right-bottom custom-close-btn" data-bs-dismiss="offcanvas"></button>
             </div>
             <div class="offcanvas-body">
+            @php
+                $isLoggedIn = Auth::guard('web')->check() || Auth::guard('owner')->check() || Auth::guard('admin')->check();
+            @endphp
                 <ul class="navbar-nav">
                     <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="/">Home</a></li>
-                    @if (Auth::check())
-                        <form action="/logout" method="post">
-                            @csrf
-                            <li class="nav-item d-flex justify-content-center">
+                    @if ($isLoggedIn)
+                        <li class="nav-item d-flex justify-content-center">
+                            <form action="/logout" method="post" class="d-inline-block">
+                                @csrf
                                 <button type="submit" class="nav-link border-0 text-primary fw-medium pt-0">Logout</button>
-                            </li>
-                        </form>
-                        <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="/mypage">MyPage</a></li>
+                            </form>
+                        </li>
                     @else
                         <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="{{ route('register') }}">Registration</a></li>
                         <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="{{ route('login') }}">Login</a></li>
+                    @endif
+                    @if (Auth::guard('web')->check())
+                        <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="/mypage">MyPage</a></li>
+                    @endif
+                    @if (Auth::guard('owner')->check())
+                        <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="/owner">OwnerPage</a></li>
+                    @endif
+                    @if (Auth::guard('admin')->check())
+                        <li class="nav-item"><a class="nav-link text-primary fw-medium text-center pt-0" href="/admin">AdminPage</a></li>
                     @endif
                 </ul>
             </div>

@@ -175,6 +175,8 @@
                 btn.querySelector('.select__placeholder').style.color = '';
                 input.value = item.dataset.value;
                 menu.style.display = 'none';
+                window.getSelection().removeAllRanges();
+                document.activeElement.blur();
             });
         });
         document.addEventListener('click', (e) => {
@@ -193,7 +195,6 @@
             li.addEventListener('click', function() {
                 const val = this.dataset.value;
                 numberInput.value = val;
-                numberText.textContent = val + '人';
             });
         });
     });
@@ -230,6 +231,8 @@
                             timeInput.value = t;
                             dropdownBtnText.textContent = t;
                             timeList.style.display = 'none';
+                            window.getSelection().removeAllRanges();
+                            document.activeElement.blur();
                         });
                         timeList.appendChild(li);
                     });

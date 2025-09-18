@@ -15,6 +15,7 @@
                     <div class="custom-dropdown px-2 py-1 rounded-1">
                         <div class="custom-btn d-flex align-items-center justify-content-between">
                             <p class="show-text fw-normal m-0 select__placeholder">店舗を選択してください</p>
+                            <input type="hidden" name="shop_id" id="shop_id">
                             <svg class="arrow" viewBox="0 0 12 16">
                                 <path d="M6 10 L12 7 L6 16 L0 8 Z" fill="#d6dfff"/>
                             </svg>
@@ -144,6 +145,8 @@
                 btn.querySelector('.select__placeholder').style.color = '';
                 input.value = item.dataset.value;
                 menu.style.display = 'none';
+                window.getSelection().removeAllRanges();
+                document.activeElement.blur();
             });
         });
         document.addEventListener('click', (e) => {
