@@ -21,7 +21,7 @@ class UserTest extends TestCase
         $response->assertRedirect('/login');
     }
 
-    public function test_like():void
+    public function test_like(): void
     {
         $user = User::factory()->create();
         $shop = Shop::factory()->create();
@@ -211,7 +211,7 @@ class UserTest extends TestCase
 
         $response->assertSee('ご予約ありがとうございます');
         $response->assertSee('戻る');
-        $response->assertSee('detail',['shop_id' => $shop->id]);
+        $response->assertSee('detail', ['shop_id' => $shop->id]);
     }
 
     public function test_mypage_guest_is_redirected(): void

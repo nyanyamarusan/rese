@@ -30,8 +30,8 @@ class SendReservationReminders extends Command
         $today = now()->format('Y-m-d');
 
         $reservations = Reservation::where('date', $today)
-                                    ->where('reminded', false)
-                                    ->get();
+            ->where('reminded', false)
+            ->get();
 
         foreach ($reservations as $reservation) {
             $reservation->user->notify(new ReservationReminder($reservation));

@@ -11,8 +11,8 @@ use Carbon\CarbonPeriod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Stripe\Stripe;
 use Stripe\Checkout\Session;
+use Stripe\Stripe;
 
 class OwnerController extends Controller
 {
@@ -169,14 +169,14 @@ class OwnerController extends Controller
         $session = Session::create([
             'payment_method_types' => ['card'],
             'line_items' => [[
-            'price_data' => [
-                'currency' => 'jpy',
-                'product_data' => [
-                    'name' => 'Reservation #' . $reservation->id,
+                'price_data' => [
+                    'currency' => 'jpy',
+                    'product_data' => [
+                        'name' => 'Reservation #' . $reservation->id,
+                    ],
+                    'unit_amount' => $request->amount,
                 ],
-                'unit_amount' => $request->amount,
-            ],
-            'quantity' => 1,
+                'quantity' => 1,
             ]],
             'mode' => 'payment',
             'customer_email' => $reservation->user->email,

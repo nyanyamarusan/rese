@@ -2,19 +2,19 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
 use App\Models\Admin;
 use App\Models\Owner;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
+use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Auth\Notifications\VerifyEmail;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\URL;
 use Laravel\Fortify\Contracts\VerifyEmailViewResponse;
+use Tests\TestCase;
 
 class AuthTest extends TestCase
 {
@@ -570,7 +570,6 @@ class AuthTest extends TestCase
         $this->actingAs($user);
         $this->assertAuthenticated();
 
-
         $response = $this->get('/owner/login');
         $response->assertStatus(200);
 
@@ -692,8 +691,8 @@ class AuthTest extends TestCase
         $user = User::factory()->unverified()->create();
 
         $this->actingAs($user)
-        ->post(route('verification.send'))
-        ->assertRedirect();
+            ->post(route('verification.send'))
+            ->assertRedirect();
 
         Notification::assertSentTo($user, VerifyEmail::class);
     }

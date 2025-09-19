@@ -313,15 +313,15 @@ class OwnerTest extends TestCase
         $this->actingAs($owner, 'owner');
 
         $mockSession = Mockery::mock('alias:Stripe\Checkout\Session');
-        $mockSession->shouldReceive('create')->andReturn((object)[
+        $mockSession->shouldReceive('create')->andReturn((object) [
             'id' => 'cs_test_123',
             'url' => 'https://checkout.stripe.com/pay/cs_test_123',
             'metadata' => ['reservation_id' => $reservation->id],
         ]);
-        $mockSession->shouldReceive('retrieve')->with('cs_test_123')->andReturn((object)[
+        $mockSession->shouldReceive('retrieve')->with('cs_test_123')->andReturn((object) [
             'id' => 'cs_test_123',
             'payment_status' => 'paid',
-            'metadata' => (object)['reservation_id' => $reservation->id],
+            'metadata' => (object) ['reservation_id' => $reservation->id],
         ]);
 
         $response = $this->post('/owner/checkout', [
@@ -356,10 +356,10 @@ class OwnerTest extends TestCase
         $this->actingAs($owner, 'owner');
 
         $mockSession = Mockery::mock('alias:Stripe\Checkout\Session');
-        $mockSession->shouldReceive('retrieve')->with('cs_test_fail')->andReturn((object)[
+        $mockSession->shouldReceive('retrieve')->with('cs_test_fail')->andReturn((object) [
             'id' => 'cs_test_fail',
             'payment_status' => 'unpaid',
-            'metadata' => (object)['reservation_id' => $reservation->id],
+            'metadata' => (object) ['reservation_id' => $reservation->id],
         ]);
 
         $response = $this->get('/owner/checkout/success?session_id=cs_test_fail');

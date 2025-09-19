@@ -31,6 +31,7 @@ class ReservationFactory extends Factory
                     ->dateTimeBetween("today {$shop->open_time}", "today {$shop->close_time}");
 
                 $time->setTime($time->format('H'), 0);
+
                 return $time->format('H:i');
             },
             'number' => $this->faker->numberBetween(1, 10),

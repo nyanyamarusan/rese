@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Models\Area;
 use App\Models\Genre;
+use App\Models\Owner;
+use App\Models\Reservation;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;

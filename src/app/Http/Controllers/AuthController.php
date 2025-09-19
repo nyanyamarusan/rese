@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use App\Http\Requests\AdminOrOwnerLoginRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -24,6 +24,7 @@ class AuthController extends Controller
 
         Auth::login($user);
         event(new Registered($user));
+
         return redirect()->route('verification.notice');
     }
 
@@ -72,12 +73,10 @@ class AuthController extends Controller
         if (Auth::guard('admin')->check()) {
             Auth::guard('admin')->logout();
             $redirect = 'admin-login-view';
-        }
-        elseif (Auth::guard('owner')->check()) {
+        } elseif (Auth::guard('owner')->check()) {
             Auth::guard('owner')->logout();
             $redirect = 'owner-login-view';
-        }
-        else {
+        } else {
             Auth::logout();
             $redirect = 'login';
         }

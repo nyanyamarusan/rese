@@ -13,6 +13,7 @@ class NoticeMail extends Mailable
     use Queueable, SerializesModels;
 
     public $subjectText;
+
     public $bodyText;
 
     /**

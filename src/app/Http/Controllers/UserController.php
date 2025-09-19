@@ -6,13 +6,12 @@ use App\Http\Requests\ReservationRequest;
 use App\Models\Reservation;
 use App\Models\Review;
 use App\Models\Shop;
-use App\Models\User;
+use Carbon\Carbon;
 use Endroid\QrCode\QrCode;
 use Endroid\QrCode\Writer\SvgWriter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
-use Carbon\Carbon;
 
 class UserController extends Controller
 {
@@ -92,7 +91,7 @@ class UserController extends Controller
             ->toArray();
 
         $start = $shop->open_time->copy();
-        $end   = $shop->close_time->copy();
+        $end = $shop->close_time->copy();
         $times = [];
 
         while ($start->lt($end)) {
@@ -100,11 +99,13 @@ class UserController extends Controller
 
             if ($selectedDateCarbon->isSameDay($now) && $start->lte($now)) {
                 $start->addHour();
+
                 continue;
             }
 
             if (in_array($timeStr, $bookedTimes)) {
                 $start->addHour();
+
                 continue;
             }
 

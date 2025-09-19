@@ -22,7 +22,6 @@ class AdminOrOwnerLoginRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-
     public string $role;
 
     public function rules(): array
@@ -64,7 +63,7 @@ class AdminOrOwnerLoginRequest extends FormRequest
 
         RateLimiter::clear($key);
 
-        foreach (['admin','owner'] as $guard) {
+        foreach (['admin', 'owner'] as $guard) {
             if ($guard !== $role) {
                 Auth::guard($guard)->logout();
             }

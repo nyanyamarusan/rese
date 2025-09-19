@@ -31,4 +31,5 @@ switch ($env) {
         $app->loadEnvironmentFrom('.env');
         break;
 }
+
 return $app;

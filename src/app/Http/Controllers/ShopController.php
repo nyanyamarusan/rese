@@ -22,7 +22,7 @@ class ShopController extends Controller
             $userLikes = $user->likes()->pluck('shop_id')->toArray();
         } else {
             $userLikes = [];
-        };
+        }
 
         return view('index', compact('shops', 'areas', 'genres', 'userLikes'));
     }
@@ -42,14 +42,14 @@ class ShopController extends Controller
             $userLikes = $user->likes()->pluck('shop_id')->toArray();
         } else {
             $userLikes = [];
-        };
+        }
 
         return view('index', compact('shops', 'areas', 'genres', 'userLikes'));
     }
 
     public function detail(Request $request, $shop_id)
     {
-        $shop = Shop::with(['area', 'genre',])->findOrFail($shop_id);
+        $shop = Shop::with(['area', 'genre'])->findOrFail($shop_id);
 
         $times = [];
 
@@ -71,7 +71,7 @@ class ShopController extends Controller
             ->toArray();
 
         $start = $shop->open_time->copy();
-        $end   = $shop->close_time->copy();
+        $end = $shop->close_time->copy();
         $times = [];
 
         while ($start->lt($end)) {
@@ -79,11 +79,13 @@ class ShopController extends Controller
 
             if ($selectedDateCarbon->isSameDay($now) && $start->lte($now)) {
                 $start->addHour();
+
                 continue;
             }
 
             if (in_array($timeStr, $bookedTimes)) {
                 $start->addHour();
+
                 continue;
             }
 
