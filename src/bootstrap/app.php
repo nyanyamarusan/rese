@@ -16,20 +16,3 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();
-
-$app = new Application(
-    $_ENV['APP_BASE_PATH'] ?? dirname(__DIR__)
-);
-
-$env = $_SERVER['APP_ENV'] ?? $_ENV['APP_ENV'] ?? 'local';
-
-switch ($env) {
-    case 'production':
-        $app->loadEnvironmentFrom('.env.production');
-        break;
-    default:
-        $app->loadEnvironmentFrom('.env');
-        break;
-}
-
-return $app;
