@@ -42,17 +42,15 @@
 
 ### Dockerビルド
  1. git clone git@github.com:nyanyamarusan/rese.git
- 2. （開発用コマンド）docker-compose up -d --build<br>
-    （本番用コマンド）docker-compose -f docker-compose.prod.yml up -d --build
+ 2. docker-compose up -d --build
 
-＊ MySQLは、OSによって起動しない場合があるのでそれぞれのPCに合わせて docker-compose.yml ファイルまたは docker-compose.prod.yml ファイルを編集してください。
+＊ MySQLは、OSによって起動しない場合があるのでそれぞれのPCに合わせて docker-compose.yml ファイルを編集してください。
 
 ### Laravel環境構築
 
  1. docker-compose exec php bash
  2. composer install
- 3. .env.exampleファイルから.envを作成し、環境変数を変更<br>
-    本番用にも同じようにもう一つ.envを作成し、環境変数を変更（以下、.env.production）
+ 3. .env.exampleファイルから.envを作成し、環境変数を変更
  4. php artisan key:generate
  5. php artisan migrate
  6. php artisan db:seed
@@ -89,66 +87,17 @@
     - STRIPE_KEY= あなたの公開可能キー
     - STRIPE_SECRET= あなたの秘密キー
 
-### .env.productionファイルの設定
-
-- APP_ENV=production
-- APP_DEBUG=false
-- APP_URL=
-
-- ロケール設定
-
-    - .envファイルと同じ
-
-- セッション、キャッシュ設定
-
-    - .envファイルと同じ
-
-- ログ設定
-
-    - LOG_CHANNEL=stack
-    - LOG_STACK=daily
-    - LOG_LEVEL=error
-
-- AWS設定
-
-    - AWS_ACCESS_KEY_ID=
-    - AWS_SECRET_ACCESS_KEY=
-    - AWS_DEFAULT_REGION=
-    - AWS_BUCKET=
-    - AWS_URL=
-    - AWS_USE_PATH_STYLE_ENDPOINT=false
-
-- ファイルシステム設定
-
-    - FILESYSTEM_DISK=s3
-
-- メール設定
-
-    - MAIL_MAILER=smtp
-    - MAIL_SCHEME=null
-    - MAIL_HOST=
-    - MAIL_PORT=1025
-    - MAIL_USERNAME=null
-    - MAIL_PASSWORD=null
-    - MAIL_FROM_ADDRESS= あなたの使用するメールアドレス
-    - MAIL_FROM_NAME="${APP_NAME}"
-
-- stripe設定
-
-    - .envファイルと同じ
-
-＊ .envファイルと.env.productionファイルともに、もし、変更後に設定が反映されていなかった場合、php artisan config:clear で、キャッシュクリアしてみてください。
+＊ もし、変更後に設定が反映されていなかった場合、php artisan config:clear で、キャッシュクリアしてみてください。
 
 ## 使用技術
 
 - PHP 8.3-fpm
-- Laravel 12.1.1
+- Laravel 12.25.0
 - MySQL 8.0.41
 - nginx 1.26.3
 - endroid/qr-code
-- mailhog (開発用のみ)
+- mailhog
 - stripe
-- AWS
 - Fortify
 - Bootstrap(CDN経由で読み込み)<br>
     ＊ 自作CSS('public/css/custom.css')も併用
@@ -161,19 +110,14 @@
 
 ![ER図](/rese-er.drawio.png)
 
-## URL（開発用）
+## URL
 
 - 開発環境：http://localhost/
 - phpMyAdmin：http://localhost:8080/
 - Mailhog：http://localhost:8025/
 - 一般ユーザー登録：http://localhost/register
 
-## URL（本番用）
-
-- 本番環境：
-- 一般ユーザー登録：
-
-## ログイン情報（開発用）
+## ログイン情報
 
 - 一般ユーザー
     - メールアドレス：user@example.com
