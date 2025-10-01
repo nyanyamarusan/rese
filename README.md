@@ -96,7 +96,7 @@
 - MySQL 8.0.41
 - nginx 1.26.3
 - endroid/qr-code
-- mailhog
+- mailhog(開発用)
 - stripe
 - Fortify
 - Bootstrap(CDN経由で読み込み)<br>
