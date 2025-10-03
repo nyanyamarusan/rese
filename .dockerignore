@@ -1,0 +1,7 @@
+node_modules
+.node_reql_history
+.DS_Store
+**/.DS_Store
+vendor
+.git
+.gitignore
