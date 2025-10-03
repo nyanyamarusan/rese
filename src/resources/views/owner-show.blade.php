@@ -194,7 +194,7 @@
                     </div>
                     <div class="d-flex col-10 mt-3 flex-column gap-2">
                         <label for="image" class="col-3">Image</label>
-                        <img src="{{ asset('storage/shop-img/' . $shop->image) }}" class="w-100 my-sm-4 my-3" id="imagePreview">
+                        <img src="{{ $shop->image_url }}" class="w-100 my-sm-4 my-3" id="imagePreview">
                         <input type="file" name="image" id="image" class="show-text fw-normal" accept="image/*">
                     </div>
                     <div class="d-flex col-10 mt-3 flex-column gap-2">

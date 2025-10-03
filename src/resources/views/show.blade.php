@@ -10,7 +10,7 @@
                 </div>
                 <h2 class="m-0 fw-bold fs-5">{{ $shop->name }}</h2>
             </div>
-            <img src="{{ asset('storage/shop-img/' . $shop->image) }}" class="w-100 my-sm-4 my-3">
+            <img src="{{ $shop->image_url }}" class="w-100 my-sm-4 my-3">
             <p class="mb-0 show-text">#{{ $shop->area->name }}
                 <span>#{{ $shop->genre->name }}</span>
             </p>
