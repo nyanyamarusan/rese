@@ -1,7 +1,7 @@
 @props(['shop', 'userLikes'])
 <div class="col">
     <div class="card shadow-right-bottom border-0 col">
-        <img src="{{ asset('storage/shop-img/' . $shop->image) }}" class="card-img">
+        <img src="{{ $shop->image_url }}" class="card-img">
         <div class="card-body p-xl-4">
             <h5 class="fw-bold mb-1 fs-1_39vw">{{ $shop->name }}</h5>
             <p class="mb-0 fw-medium fs-0_98vw">#{{ $shop->area->name }}
