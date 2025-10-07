@@ -82,17 +82,4 @@ class Shop extends Model
     {
         return $user->likes()->where('shop_id', $this->id)->exists();
     }
-
-    public function getImageUrlAttribute()
-    {
-        if (!$this->image) return null;
-        $disk = in_array(app()->environment(), ['local', 'testing']) ? 'public' : config('filesystems.cloud');
-
-        try {
-            return Storage::disk($disk)->url('shop-img/' . $this->image);
-        } catch (\Exception $e) {
-            Log::error('Storage URL生成エラー: ' . $e->getMessage());
-            return null;
-        }
-    }
 }

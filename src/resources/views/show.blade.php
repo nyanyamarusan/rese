@@ -10,7 +10,7 @@
                 </div>
                 <h2 class="m-0 fw-bold fs-5">{{ $shop->name }}</h2>
             </div>
-            <img src="{{ $shop->image_url }}" class="w-100 my-sm-4 my-3">
+            <img src="{{ Storage::url('shop-img/' . $shop->image) }}" class="w-100 my-sm-4 my-3">
             <p class="mb-0 show-text">#{{ $shop->area->name }}
                 <span>#{{ $shop->genre->name }}</span>
             </p>
@@ -20,6 +20,7 @@
             <div class="card bg-primary text-white position-absolute w-100 card-position">
             <form action="{{ route('reservation') }}" method="post">
                 @csrf
+                <input type="hidden" name="shop_id" value="{{ $shop->id }}">
                 <div class="card-body p-lg-4">
                     <h2 class="card-title fs-5 fw-bold mb-3 mb-lg-4">予約</h2>
                     <div class="mb-3">

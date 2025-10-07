@@ -91,16 +91,23 @@
 
 ## 使用技術
 
-- PHP 8.3-fpm
+- PHP 8.3-fpm (本番環境では 8.4.10)
 - Laravel 12.25.0
-- MySQL 8.0.41
-- nginx 1.26.3
+- MySQL 8.0.41 (本番環境では 8.0.42)
+- nginx 1.26.3 (本番環境では 1.28.0)
 - endroid/qr-code
-- mailhog(開発用)
+- mailhog
 - stripe
 - Fortify
+- cron（本番環境のみ）
 - Bootstrap(CDN経由で読み込み)<br>
     ＊ 自作CSS('public/css/custom.css')も併用
+
+## 本番環境(AWS)
+
+- サーバー：EC2
+- データベース：RDS MySQL
+- ストレージ：S3
 
 ## テーブル設計
 
@@ -116,6 +123,7 @@
 - phpMyAdmin：http://localhost:8080/
 - Mailhog：http://localhost:8025/
 - 一般ユーザー登録：http://localhost/register
+- 本番環境 : http://54.168.133.144/
 
 ## ログイン情報
 
@@ -138,6 +146,11 @@
 
 - API通信を使用し、セッションを作成、取得する
 - テストではMockを使用してAPIへの実通信なして確認可能
+
+## スケジューラーについて
+
+- 開発環境では、docker-compose.ymlファイルを使用しています
+- 本番環境では、cronを使用しています
 
 ## テスト実行方法
 

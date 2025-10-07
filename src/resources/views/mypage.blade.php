@@ -37,9 +37,14 @@
                                             <input type="date" value="{{ $reservation->date->format('Y-m-d') }}" id="date" name="date"
                                                 class="border-0 show-text fw-normal bg-primary text-white dateInput" min="{{ \Carbon\Carbon::today()->toDateString() }}">
                                         </td>
-                                        @error('date')
-                                            <p class="text-danger text-outline">{{ $message }}</p>
-                                        @enderror
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <td>
+                                            @error('date')
+                                                <p class="text-danger text-outline">{{ $message }}</p>
+                                            @enderror
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="col-4 col-md-5 col-lg-4 col-xl-3 py-1 py-xl-2 show-text fw-normal">Time</th>
@@ -60,9 +65,14 @@
                                                 <input type="hidden" name="time" class="timeInput">
                                             </div>
                                         </td>
-                                        @error('time')
-                                            <p class="text-danger text-outline">{{ $message }}</p>
-                                        @enderror
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <td>
+                                            @error('time')
+                                                <p class="text-danger text-outline">{{ $message }}</p>
+                                            @enderror
+                                        </td>
                                     </tr>
                                     <tr>
                                         <th class="col-4 col-md-5 col-lg-4 col-xl-3 py-1 py-xl-2 show-text fw-normal">Number</th>
@@ -82,9 +92,14 @@
                                                 <input type="hidden" name="number" class="numberInput">
                                             </div>
                                         </td>
-                                        @error('number')
-                                            <p class="text-danger text-outline">{{ $message }}</p>
-                                        @enderror
+                                    </tr>
+                                    <tr>
+                                        <th></th>
+                                        <td>
+                                            @error('number')
+                                                <p class="text-danger text-outline">{{ $message }}</p>
+                                            @enderror
+                                        </td>
                                     </tr>
                                 </table>
                                 <div class="d-flex justify-content-between">

@@ -35,7 +35,7 @@ class OwnerController extends Controller
     public function store(Request $request)
     {
         $owner = Auth::guard('owner')->user();
-        $shop = $request->only([
+        $shopData = $request->only([
             'name',
             'area_id',
             'genre_id',
@@ -44,12 +44,13 @@ class OwnerController extends Controller
             'close_time',
         ]);
 
-        $image = $request->file('image')
-            ->store('shop-img', env('FILESYSTEM_DISK', 'public'));
-        $shop['image'] = basename($image);
-        $shop['owner_id'] = $owner->id;
+        $image = $request->file('image');
+        $disk = config('filesystems.default');
+        $path = Storage::disk($disk)->putFile('shop-img', $image, 'public');
+        $shopData['image'] = basename($path);
+        $shopData['owner_id'] = $owner->id;
 
-        Shop::create($shop);
+        Shop::create($shopData);
 
         return redirect()->route('owner-index')
             ->with('message', '店舗を登録しました');
@@ -101,25 +102,30 @@ class OwnerController extends Controller
 
         $shopData = $request->only([
             'name',
-            'area_id',
-            'genre_id',
             'detail',
-            'open_time',
-            'close_time',
         ]);
 
-        $image = $request->file('image')
-            ->store('shop-img', env('FILESYSTEM_DISK', 'public'));
-        $shopData['image'] = basename($image);
-        if ($shop->image) {
-            $image = 'shop-img/' . $shop->image;
-            Storage::disk(env('FILESYSTEM_DISK', 'public'))->delete($image);
+        $shopData['area_id'] = $request->area_id ?? $shop->area_id;
+        $shopData['genre_id'] = $request->genre_id ?? $shop->genre_id;
+        $shopData['open_time'] = $request->open_time ?? $shop->open_time;
+        $shopData['close_time'] = $request->close_time ?? $shop->close_time;
+
+        if ($request->hasFile('image')) {
+            $image = $request->file('image');
+            $disk = config('filesystems.default');
+            $path = Storage::disk($disk)->putFile('shop-img', $image, 'public');
+            $shopData['image'] = basename($path);
+
+            if ($shop->image) {
+                $image = 'shop-img/' . $shop->image;
+                Storage::disk($disk)->delete($image);
+            }
         }
 
         $shop->update($shopData);
 
         return redirect()->route('owner-show', [
-            'shop_id' => $shop_id,
+            'shop_id' => $shop->id,
             'tab' => 'edit',
         ])->with([
             'status' => 'success',
@@ -180,7 +186,7 @@ class OwnerController extends Controller
             ]],
             'mode' => 'payment',
             'customer_email' => $reservation->user->email,
-            'success_url' => route('checkout-success', ['session_id' => '{CHECKOUT_SESSION_ID}']),
+            'success_url' => route('checkout-success') . '?session_id={CHECKOUT_SESSION_ID}',
             'metadata' => [
                 'reservation_id' => $reservation->id,
             ],

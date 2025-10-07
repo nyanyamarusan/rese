@@ -109,7 +109,7 @@
         </div>
         <div class="tab-pane fade {{ $activeTab === 'edit' ? 'show active' : '' }}" id="edit">
             <div class="d-flex justify-content-center">
-                <x-form title="Edit Shop" enctype="enctype='multipart/form-data'" route="owner-update" params="['shop_id' => $shop->id]" buttonText="更新" class="mt-4 col-md-8 col-12">
+                <x-form title="Edit Shop" enctype="multipart/form-data" route="owner-update" :params="['shop_id' => $shop->id]" buttonText="更新" class="mt-4 col-md-8 col-12">
                     @method('PATCH')
                     <div class="d-flex align-items-center col-10 mt-3">
                         <label for="name" class="font-bold col-3">Name</label>
@@ -194,7 +194,7 @@
                     </div>
                     <div class="d-flex col-10 mt-3 flex-column gap-2">
                         <label for="image" class="col-3">Image</label>
-                        <img src="{{ $shop->image_url }}" class="w-100 my-sm-4 my-3" id="imagePreview">
+                        <img src="{{ Storage::url('shop-img/' . $shop->image) }}" class="w-100 my-sm-4 my-3" id="imagePreview">
                         <input type="file" name="image" id="image" class="show-text fw-normal" accept="image/*">
                     </div>
                     <div class="d-flex col-10 mt-3 flex-column gap-2">

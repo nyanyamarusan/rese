@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 </head>
 
-<body class="bg-f0ffff font-geist">
+<body class="bg-eee font-geist">
     <header class="container d-md-flex justify-content-between align-items-center py-md-4 py-2">
         <nav class="navbar">
             <div class="d-flex align-items-center gap-3">
