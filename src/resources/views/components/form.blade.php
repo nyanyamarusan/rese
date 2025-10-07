@@ -8,7 +8,7 @@
 ])
 <div class="rounded-1 shadow-right-bottom bg-white {{ $class }}">
     <p class="bg-primary text-white p-3 fs-5 rounded-top-1 mb-2">{{ $title }}</p>
-    <form action="{{ route($route, $params) }}" method="POST" class="d-flex flex-column align-items-center" {{ $enctype }}>
+    <form action="{{ route($route, $params) }}" method="POST" class="d-flex flex-column align-items-center" @if($enctype) enctype="{{ $enctype }}" @endif>
         @csrf
         {{ $slot }}
         <div class="text-end px-2 py-4 col-11">

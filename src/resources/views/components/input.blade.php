@@ -23,8 +23,7 @@
         value="{{ old($name, $value) }}"
         class="border-0 border-bottom border-black {{ $inputClass }}"
     >
-
-    @error($name)
-        <p class="text-danger mt-2">{{ $message }}</p>
-    @enderror
 </div>
+@error($name)
+    <p class="text-danger mt-2">{{ $message }}</p>
+@enderror
